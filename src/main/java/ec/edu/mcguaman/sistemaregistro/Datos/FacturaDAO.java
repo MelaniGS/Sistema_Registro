@@ -1,7 +1,6 @@
 package ec.edu.mcguaman.sistemaregistro.Datos;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
+import javax.persistence.*;
 import modelo.Factura;
 import util.persistenceUtil;
 
@@ -10,6 +9,17 @@ import util.persistenceUtil;
  * @author ASUS
  */
 public class FacturaDAO {
+
+    private static EntityManagerFactory emf;
+
+    static {
+        emf = Persistence.createEntityManagerFactory("SistemaRegistroUsuario");
+    }
+
+    // This method returns the EntityManager for interacting with the database
+    public EntityManager getEntityManager() {
+        return emf.createEntityManager();
+    }
 
     // [0] registro exitoso [1] ocurrio un error 
     public int RegistrarFactura(Factura facturaAgregar) {
@@ -54,20 +64,26 @@ public class FacturaDAO {
         }
     }
 
-    public boolean guardarFactura(Factura factura) {
-        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
+    public Factura guardarFactura(Factura factura) {
+        EntityManager em = getEntityManager();  // Asumiendo que tienes un EntityManager configurado
+
         try {
-            em.getTransaction().begin();
-            em.persist(factura);  // Save the invoice in the database
-            em.getTransaction().commit();
-            return true;
+            em.getTransaction().begin();  // Iniciar transacción
+            em.persist(factura);  // Guardar la factura
+            em.getTransaction().commit();  // Confirmar la transacción
+            return factura;  // Devolver la factura con el ID generado
         } catch (Exception e) {
-            em.getTransaction().rollback();
+            em.getTransaction().rollback();  // Si ocurre un error, hacer rollback
             e.printStackTrace();
-            return false;
+            return null;
         } finally {
-            em.close();
+            em.close();  // Cerrar la conexión
         }
+    }
+
+    public Factura buscarFacturaPorId(int id) {
+        EntityManager em = getEntityManager();  // Asegúrate de tener un EntityManager configurado
+        return em.find(Factura.class, id);  // Devuelve la factura por su ID
     }
 
 }

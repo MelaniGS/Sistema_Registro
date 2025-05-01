@@ -4,6 +4,7 @@
  */
 package modelo;
 
+import java.util.List;
 import javax.persistence.*;
 
 /**
@@ -12,6 +13,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "detalle_factura")
+
 public class DetalleFactura {
 
     @Id
@@ -25,7 +27,7 @@ public class DetalleFactura {
     private float precioUnitario;
 
     @Column
-    private float total; // Field to store the total price
+    private float total;  // Campo para total
 
     @ManyToOne
     @JoinColumn(name = "producto_id")
@@ -36,13 +38,13 @@ public class DetalleFactura {
     private Factura factura;
 
     public DetalleFactura() {
+
     }
 
     public DetalleFactura(float cantidad, float precioUnitario, Producto producto) {
         this.cantidad = cantidad;
         this.precioUnitario = precioUnitario;
         this.producto = producto;
-        this.total = cantidad * precioUnitario; // Calculate total automatically
     }
 
     public DetalleFactura(int id, float cantidad, float precioUnitario, Producto producto) {
@@ -50,7 +52,6 @@ public class DetalleFactura {
         this.cantidad = cantidad;
         this.precioUnitario = precioUnitario;
         this.producto = producto;
-        this.total = cantidad * precioUnitario; // Calculate total automatically
     }
 
     public int getId() {
@@ -67,7 +68,6 @@ public class DetalleFactura {
 
     public void setCantidad(float cantidad) {
         this.cantidad = cantidad;
-        this.total = this.cantidad * this.precioUnitario; // Recalculate total when cantidad changes
     }
 
     public float getPrecioUnitario() {
@@ -76,15 +76,6 @@ public class DetalleFactura {
 
     public void setPrecioUnitario(float precioUnitario) {
         this.precioUnitario = precioUnitario;
-        this.total = this.cantidad * this.precioUnitario; // Recalculate total when precioUnitario changes
-    }
-
-    public float getTotal() {
-        return total;
-    }
-
-    public void setTotal(float total) {
-        this.total = total; // Explicitly set the total if needed
     }
 
     public Producto getProducto() {
@@ -102,4 +93,21 @@ public class DetalleFactura {
     public void setFactura(Factura factura) {
         this.factura = factura;
     }
+
+    public void setTotal(float total) {
+        this.total = total;  // Asignar el valor del total
+    }
+
+    public float getTotal() {
+        return this.cantidad * this.precioUnitario;
+    }
+
+    private float calcularMontoTotal(List<DetalleFactura> detalles) {
+        float montoTotal = 0;
+        for (DetalleFactura detalle : detalles) {
+            montoTotal += detalle.getTotal(); // Sumar el total de cada detalle
+        }
+        return montoTotal;
+    }
+
 }

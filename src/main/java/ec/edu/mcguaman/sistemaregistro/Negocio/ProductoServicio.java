@@ -37,7 +37,6 @@ public class ProductoServicio {
         return productoDao.ActualizarProducto(id, producto);
     }
 
-    // Clase ProductoServicio
     public Producto BuscarProductoPorId(int id) {
         return productoDao.obtenerProductoPorId(id);  // Llama al método en ProductoDAO para obtener el producto por ID
     }

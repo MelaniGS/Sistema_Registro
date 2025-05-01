@@ -11,45 +11,41 @@ import java.util.List;
  *
  * @author ASUS
  */
-
 @Entity
 @Table(name = "factura")
 public class Factura {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
+
     @ManyToOne
     @JoinColumn(name = "idpersona")
     private Persona persona;
-    
-    
+
     @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL)
     private List<DetalleFactura> detalles;
-    
-    
-    public Factura (){
-        
+
+    @Column
+    private float montoTotal;  // Añadimos la propiedad para el monto total
+
+    public Factura() {
     }
-    
-    public Factura (Persona persona, List<DetalleFactura> detalles){
+
+    public Factura(Persona persona, List<DetalleFactura> detalles) {
         this.persona = persona;
         this.detalles = detalles;
-        
-        for(DetalleFactura d: detalles){
-            d.setFactura(this);
+        for (DetalleFactura detalle : detalles) {
+            detalle.setFactura(this);
         }
     }
-    
-    
-    public Factura (int id, Persona persona, List<DetalleFactura> detalles){
+
+    public Factura(int id, Persona persona, List<DetalleFactura> detalles) {
         this.id = id;
         this.persona = persona;
         this.detalles = detalles;
     }
 
-    
     public int getId() {
         return id;
     }
@@ -72,5 +68,14 @@ public class Factura {
 
     public void setDetalles(List<DetalleFactura> detalles) {
         this.detalles = detalles;
+    }
+
+    public float getMontoTotal() {
+        return montoTotal;
+    }
+
+    // Método para asignar el monto total
+    public void setMontoTotal(float montoTotal) {
+        this.montoTotal = montoTotal;
     }
 }

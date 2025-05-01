@@ -36,12 +36,13 @@ public class frm_Producto extends javax.swing.JInternalFrame {
     private void mostrarDatos(List<Producto> listaProductos) {
         listadoProductos = listaProductos;
         modelo = new DefaultTableModel();
+        modelo.addColumn("ID");
         modelo.addColumn("Codigo");
         modelo.addColumn("Nombre");
         modelo.addColumn("Precio");
 
         for (Producto prod : listaProductos) {
-            Object[] fila = {prod.getCodigo(), prod.getNombre(), prod.getPrecio()};
+            Object[] fila = {prod.getId(),  prod.getCodigo(), prod.getNombre(), prod.getPrecio()};
             modelo.addRow(fila);
         }
         tbl_producto.setModel(modelo);
@@ -302,11 +303,11 @@ public class frm_Producto extends javax.swing.JInternalFrame {
                 boolean eliminado = servicio.EliminarProductoPorId(idProducto);
 
                 if (eliminado) {
-                    JOptionPane.showMessageDialog(null, "Persona eliminada correctamente.");
+                    JOptionPane.showMessageDialog(null, "Producto eliminado correctamente.");
                     List<Producto> listadoProductos = servicio.ObtenerProducto();
                     mostrarDatos(listadoProductos);
                 } else {
-                    JOptionPane.showMessageDialog(null, "No se pudo eliminar la persona.");
+                    JOptionPane.showMessageDialog(null, "No se pudo eliminar el producto.");
                 }
             }
         }

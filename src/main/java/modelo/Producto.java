@@ -16,20 +16,21 @@ import javax.persistence.Table;
  * @author ASUS
  */
 @Entity
-@Table (name= "producto")
+@Table(name = "producto")
 
 public class Producto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
-    @Column(nullable=false)
+
+    @Column(nullable = false)
     private String codigo;
-    
-    @Column(nullable=false)
+
+    @Column(nullable = false)
     private String nombre;
-    
-    @Column(nullable=false)
+
+    @Column(nullable = false)
     private Double precio;
 
     public Producto() {
@@ -72,6 +73,5 @@ public class Producto {
     public void setPrecio(Double precio) {
         this.precio = precio;
     }
-    
-    
+
 }

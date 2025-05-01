@@ -7,6 +7,7 @@ package ec.edu.mcguaman.sistemaregistro.Negocio;
 import ec.edu.mcguaman.sistemaregistro.Datos.FacturaDAO;
 import ec.edu.mcguaman.sistemaregistro.Datos.PersonaDAO;
 import ec.edu.mcguaman.sistemaregistro.Datos.ProductoDAO;
+import modelo.DetalleFactura;
 import modelo.Factura;
 import modelo.Persona;
 import modelo.Producto;
@@ -56,11 +57,26 @@ public class FacturaServicio {
         this.facturaDao.RegistrarFactura(nuevaFactura);
     }
 
+    public Factura guardarFactura(Factura factura) {
+        // Guardamos la factura en la base de datos utilizando FacturaDAO
+        return facturaDAO.guardarFactura(factura);
+    }
+
     private FacturaDAO facturaDAO = new FacturaDAO();  // Non-static instance
 
-    // Method to save the invoice
-    public boolean guardarFactura(Factura factura) {
-        return facturaDAO.guardarFactura(factura);  // Call the non-static method
+    public Factura getFacturaById(int id) {
+        FacturaDAO facturaDAO = new FacturaDAO();
+        return facturaDAO.buscarFacturaPorId(id); // Esto llama al método en FacturaDAO
+    }
+
+    public float calcularMontoTotal(Factura factura) {
+        float montoTotal = 0.0f;
+
+        for (DetalleFactura detalle : factura.getDetalles()) {
+            montoTotal += detalle.getTotal();
+        }
+
+        return montoTotal;
     }
 
 }
