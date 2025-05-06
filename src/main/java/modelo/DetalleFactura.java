@@ -101,13 +101,4 @@ public class DetalleFactura {
     public float getTotal() {
         return this.cantidad * this.precioUnitario;
     }
-
-    private float calcularMontoTotal(List<DetalleFactura> detalles) {
-        float montoTotal = 0;
-        for (DetalleFactura detalle : detalles) {
-            montoTotal += detalle.getTotal(); // Sumar el total de cada detalle
-        }
-        return montoTotal;
-    }
-
 }

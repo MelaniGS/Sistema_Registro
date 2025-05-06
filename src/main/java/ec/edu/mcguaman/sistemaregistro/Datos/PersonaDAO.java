@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceUtil;
 import util.persistenceUtil;
 
 /**
@@ -190,27 +191,30 @@ public class PersonaDAO {
         }
     }
 
-    public Persona BuscarPersonaPorId(int id) {
+    public Persona obtenerPersonaPorCed(String cedula) {
         EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
         try {
-            // Consulta para buscar a la persona por su ID
-            return em.createQuery("SELECT p FROM Persona p WHERE p.id = :id", Persona.class)
-                    .setParameter("id", id)
-                    .getSingleResult();  // Obtener solo un resultado
-        } catch (NoResultException ex) {
-            return null;  // Si no se encuentra la persona, retorna null
+            String query = "SELECT p FROM Persona p WHERE p.cedula = :cedula";
+            return em.createQuery(query, Persona.class)
+                    .setParameter("cedula", cedula) 
+                    .getSingleResult();  
+        } catch (NoResultException e) {
+            return null;  // En caso de no encontrar ninguna persona con esa cédula, retornar null
         } finally {
             em.close();
         }
     }
 
-    public Persona obtenerPersonaPorId(int id) {
+    public Persona BuscarPersonaPorCedula(String cedula) {
         EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
         try {
-            // Buscar la persona por su ID usando el método find de JPA
-            return em.find(Persona.class, id);  // Devuelve la persona que coincide con el ID
+            return em.createQuery("SELECT p FROM Persona p WHERE p.numIdentificacion = :cedula", Persona.class)
+                    .setParameter("cedula", cedula)
+                    .getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
         } finally {
-            em.close();  // Asegúrate de cerrar la conexión
+            em.close();
         }
     }
 

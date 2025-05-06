@@ -82,8 +82,8 @@ public class PersonaServicio {
     }
 
     // Clase PersonaServicio
-    public Persona BuscarPersonaPorId(int id) {
-        return personaDao.obtenerPersonaPorId(id);  // Llama al método en PersonaDAO
+    public Persona BuscarPersonaPorCedula(String cedula) {
+        return personaDao.obtenerPersonaPorCed(cedula); 
     }
 
 }

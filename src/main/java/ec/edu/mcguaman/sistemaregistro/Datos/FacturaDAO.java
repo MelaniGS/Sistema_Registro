@@ -46,44 +46,21 @@ public class FacturaDAO {
     }
 
     public Factura obtenerFacturaCompletaPorId(int idFactura) {
-        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();  // Using your PersistenceUtil
+        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();  // Usando PersistenceUtil
         try {
             return em.createQuery(
                     "SELECT f FROM Factura f "
                     + "JOIN FETCH f.persona "
                     + "LEFT JOIN FETCH f.detalles d "
                     + "LEFT JOIN FETCH d.producto "
-                    + "WHERE f.id = :idFactura", Factura.class)
+                    + "WHERE f.idFactura = :idFactura", Factura.class)
                     .setParameter("idFactura", idFactura)
                     .getSingleResult();
-
         } catch (NoResultException e) {
-            return null;
+            return null;  // Retorna null si no se encuentra la factura
         } finally {
-            em.close();  // Ensure entity manager is closed after use
+            em.close();  // Asegúrate de cerrar el EntityManager después de usarlo
         }
-    }
-
-    public Factura guardarFactura(Factura factura) {
-        EntityManager em = getEntityManager();  // Asumiendo que tienes un EntityManager configurado
-
-        try {
-            em.getTransaction().begin();  // Iniciar transacción
-            em.persist(factura);  // Guardar la factura
-            em.getTransaction().commit();  // Confirmar la transacción
-            return factura;  // Devolver la factura con el ID generado
-        } catch (Exception e) {
-            em.getTransaction().rollback();  // Si ocurre un error, hacer rollback
-            e.printStackTrace();
-            return null;
-        } finally {
-            em.close();  // Cerrar la conexión
-        }
-    }
-
-    public Factura buscarFacturaPorId(int id) {
-        EntityManager em = getEntityManager();  // Asegúrate de tener un EntityManager configurado
-        return em.find(Factura.class, id);  // Devuelve la factura por su ID
     }
 
 }

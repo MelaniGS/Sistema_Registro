@@ -28,25 +28,24 @@ public class FacturaServicio {
         this.facturaDao = new FacturaDAO();
     }
 
-    public Persona BuscarPersonaPorId(int id) {
-        Persona personaEncontrada = this.personaDao.obtenerPersonaPorId(id);  // Buscar por ID
+    public Persona BuscarPersonaPorCedula(String cedula) {
+        Persona personaEncontrada = this.personaDao.obtenerPersonaPorCed(cedula);
         if (personaEncontrada == null) {
-            System.out.println("No existe esa persona con ese ID");
+            System.out.println("No existe esa persona con ese num de cedula");
         } else {
-            System.out.println("Se encontraron los detalles de la persona");
+            System.out.println("Se encontrodo los detalles de la persona");
         }
         return personaEncontrada;
     }
 
-    public Producto BuscarProductoPorId(int id) {
-        // Buscar el producto por ID usando el método 'find' de JPA
-        Producto productoEncontrado = this.productoDao.obtenerProductoPorId(id);  // Buscar por ID
+    public Producto BuscarProductoPorCodigo(String codigo) {
+        Producto productoEncontrado = this.productoDao.BuscarProductoPorCodigo(codigo);
         if (productoEncontrado == null) {
-            System.out.println("No existe ese producto con ese ID");
+            System.out.println("No existe ese producto con ese num de codigo");
         } else {
-            System.out.println("Se encontraron los detalles del producto");
+            System.out.println("Se encontrodo los detalles del producto");
         }
-        return productoEncontrado;  // Retornar el producto encontrado (o null si no se encuentra)
+        return productoEncontrado;
     }
 
     public Factura ObtenerFacturaCompleta(int idFactura) {
@@ -54,19 +53,9 @@ public class FacturaServicio {
     }
 
     public void RegistrarNuevaFactura(Factura nuevaFactura) {
+        // Asegurarnos de que el monto total se calcule antes de registrar la factura
+        nuevaFactura.setMontoTotal(nuevaFactura.calcularMontoTotal());
         this.facturaDao.RegistrarFactura(nuevaFactura);
-    }
-
-    public Factura guardarFactura(Factura factura) {
-        // Guardamos la factura en la base de datos utilizando FacturaDAO
-        return facturaDAO.guardarFactura(factura);
-    }
-
-    private FacturaDAO facturaDAO = new FacturaDAO();  // Non-static instance
-
-    public Factura getFacturaById(int id) {
-        FacturaDAO facturaDAO = new FacturaDAO();
-        return facturaDAO.buscarFacturaPorId(id); // Esto llama al método en FacturaDAO
     }
 
     public float calcularMontoTotal(Factura factura) {
