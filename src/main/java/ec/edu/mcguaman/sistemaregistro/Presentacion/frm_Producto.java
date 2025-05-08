@@ -42,7 +42,7 @@ public class frm_Producto extends javax.swing.JInternalFrame {
         modelo.addColumn("Precio");
 
         for (Producto prod : listaProductos) {
-            Object[] fila = {prod.getId(),  prod.getCodigo(), prod.getNombre(), prod.getPrecio()};
+            Object[] fila = {prod.getIdP(),  prod.getCodigo(), prod.getNombre(), prod.getPrecio()};
             modelo.addRow(fila);
         }
         tbl_producto.setModel(modelo);
@@ -297,10 +297,10 @@ public class frm_Producto extends javax.swing.JInternalFrame {
                     JOptionPane.YES_NO_OPTION);
 
             if (confirmacion == JOptionPane.YES_OPTION) {
-                int idProducto = listadoProductos.get(filaSeleccionada).getId();
+                int idProducto = listadoProductos.get(filaSeleccionada).getIdP();
                 System.out.println("El id" + idProducto);
 
-                boolean eliminado = servicio.EliminarProductoPorId(idProducto);
+                boolean eliminado = servicio.EliminarProductoPorIdP(idProducto);
 
                 if (eliminado) {
                     JOptionPane.showMessageDialog(null, "Producto eliminado correctamente.");
@@ -340,7 +340,7 @@ public class frm_Producto extends javax.swing.JInternalFrame {
 
                 Producto actualizarProducto = new Producto(codigo, nombre, precio);
 
-                int idPersona = listadoProductos.get(filaSeleccionada).getId();
+                int idPersona = listadoProductos.get(filaSeleccionada).getIdP();
 
                 boolean actualizado = servicio.ActualizarProducto(idPersona, actualizarProducto);
 

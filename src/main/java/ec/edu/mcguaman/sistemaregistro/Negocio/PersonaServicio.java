@@ -33,7 +33,7 @@ public class PersonaServicio {
 //    }
     // [0] ya existe la persona  [1] registro de persona exitoso
     // [2] Error interno [3] la persona es menor de edad
-    public int AgregarNuevsPersona(Persona persona) {
+    public int AgregarNuevaPersona(Persona persona) {
         LocalDate fecha_nacimiento = persona.getFecha_nacimiento();
 
         // se verifica que la persona sea mayor de edad para registrar

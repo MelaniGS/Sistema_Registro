@@ -231,7 +231,7 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
 
         jLabel11.setText("Subtotal:");
 
-        jLabel12.setText("IVA 12%:  ");
+        jLabel12.setText("IVA 15%:  ");
 
         jLabel13.setText("Total:");
 
@@ -512,7 +512,7 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
 
             this.txt_precio.setText(String.valueOf(this.productoEncontrado.getPrecio()));
             this.txt_nombreProducto.setText(this.productoEncontrado.getNombre());
-            this.txt_IdProducto.setText(String.valueOf(this.productoEncontrado.getId()));
+            this.txt_IdProducto.setText(String.valueOf(this.productoEncontrado.getIdP()));
 
             this.btn_agregarProducto.setEnabled(true);
             this.btn_EliminarProducto.setEnabled(true);
@@ -535,7 +535,7 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
 
             // Recorre las filas para buscar si el producto ya está en la tabla
             for (int i = 0; i < model.getRowCount(); i++) {
-                if (model.getValueAt(i, 1).equals(this.productoEncontrado.getId())) {
+                if (model.getValueAt(i, 1).equals(this.productoEncontrado.getIdP())) {
                     int cantidadExistente = (int) model.getValueAt(i, 3);
                     float totalExistente = (float) model.getValueAt(i, 5);
 
@@ -547,7 +547,7 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
             }
 
             if (!productoExistente) {
-                Object[] row = {this.productoEncontrado.getCodigo(), this.productoEncontrado.getId(), this.productoEncontrado.getNombre(),
+                Object[] row = {this.productoEncontrado.getCodigo(), this.productoEncontrado.getIdP(), this.productoEncontrado.getNombre(),
                     cantidad, precioUnitario, total};
                 model.addRow(row);
             }
@@ -572,7 +572,7 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
             subtotal += totalProducto;  // Sumar el total del producto al subtotal
         }
 
-        float iva = subtotal * 0.12f;  // 12% de IVA
+        float iva = subtotal * 0.15f;  // 15% de IVA
         float total = subtotal + iva;
 
         txt_subtotal.setText(String.format("%.2f", subtotal));  // Subtotal
@@ -606,7 +606,7 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
 
             // Eliminar el detalle correspondiente de la lista `detallesFactura`
             for (DetalleFactura detalle : detallesFactura) {
-                if (detalle.getProducto().getId() == idP) {  // Comparamos con el ID del producto
+                if (detalle.getProducto().getIdP() == idP) {  // Comparamos con el ID del producto
                     detallesFactura.remove(detalle);  // Eliminar el detalle de la lista
                     break;  // Salir del bucle una vez encontrado el detalle
                 }

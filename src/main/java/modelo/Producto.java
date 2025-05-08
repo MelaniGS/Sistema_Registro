@@ -22,7 +22,7 @@ public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int idP;
 
     @Column(nullable = false)
     private String codigo;
@@ -42,12 +42,12 @@ public class Producto {
         this.precio = precio;
     }
 
-    public int getId() {
-        return id;
+    public int getIdP() {
+        return idP;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdP(int idP) {
+        this.idP = idP;
     }
 
     public String getCodigo() {

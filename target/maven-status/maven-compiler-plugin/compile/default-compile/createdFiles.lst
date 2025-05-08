@@ -6,6 +6,7 @@ modelo\DetalleFactura.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_SistemaFactura$4.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\PersonaMain.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\SistemaRegistro$2.class
+modelo\Fidelidad.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Producto$1.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Usuario$2.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Producto$8.class
@@ -30,7 +31,9 @@ ec\edu\mcguaman\sistemaregistro\Datos\ProductoDAO.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Producto$3.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_SistemaFactura$2.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Producto$6.class
+modelo\Empleados.class
 ec\edu\mcguaman\sistemaregistro\Datos\ConexionDB.class
+modelo\Empleados$RolEmpleado.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Producto$5.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_SistemaFactura$7.class
 ec\edu\mcguaman\sistemaregistro\Negocio\PersonaServicio.class
@@ -40,6 +43,7 @@ ec\edu\mcguaman\sistemaregistro\Presentacion\frm_SistemaFactura$5.class
 ec\edu\mcguaman\sistemaregistro\Datos\PersonaDAO.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Producto$2.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\ProductoMain.class
+modelo\Cliente.class
 modelo\Persona.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Usuario$6.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Usuario$9.class

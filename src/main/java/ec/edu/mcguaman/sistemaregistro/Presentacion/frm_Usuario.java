@@ -17,6 +17,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
+import modelo.Cliente;
+import modelo.Fidelidad;
 import modelo.Persona;
 
 /**
@@ -70,6 +72,9 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
         txt_apellido = new javax.swing.JTextField();
         txt_cedula = new javax.swing.JTextField();
         txt_telefono = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        txt_direccion = new javax.swing.JTextField();
+        checkBox_afilicacion = new javax.swing.JCheckBox();
 
         setClosable(true);
         setIconifiable(true);
@@ -183,37 +188,47 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
             }
         });
 
+        jLabel8.setText("Dirección:");
+
+        txt_direccion.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        checkBox_afilicacion.setText("Desea Afiliarse");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(butt_agregar, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(butt_eliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btn_limpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(butt_actualizar, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(2, 2, 2)
-                                .addComponent(jLabel1))
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel3)
-                            .addComponent(txt_nombre)
-                            .addComponent(txt_apellido)
-                            .addComponent(txt_cedula)
-                            .addComponent(txt_telefono)
-                            .addComponent(txt_correo, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
-                            .addComponent(txt_fecha))
-                        .addComponent(jLabel5)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(butt_agregar, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(butt_eliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(btn_limpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(butt_actualizar, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(2, 2, 2)
+                                    .addComponent(jLabel1))
+                                .addComponent(jLabel4)
+                                .addComponent(jLabel2)
+                                .addComponent(jLabel6)
+                                .addComponent(jLabel3)
+                                .addComponent(txt_nombre)
+                                .addComponent(txt_apellido)
+                                .addComponent(txt_cedula)
+                                .addComponent(txt_telefono)
+                                .addComponent(txt_correo, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                                .addComponent(txt_fecha))
+                            .addComponent(jLabel5)))
+                    .addComponent(jLabel8)
+                    .addComponent(txt_direccion, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(checkBox_afilicacion))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
                 .addContainerGap())
@@ -253,7 +268,13 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_fecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(33, 33, 33)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_direccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(checkBox_afilicacion)
+                        .addGap(46, 46, 46)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(butt_agregar)
                             .addComponent(butt_eliminar))
@@ -262,7 +283,7 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
                             .addComponent(btn_limpiar)
                             .addComponent(butt_actualizar)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGap(0, 17, Short.MAX_VALUE))
+                .addGap(0, 16, Short.MAX_VALUE))
         );
 
         pack();
@@ -271,17 +292,32 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
     private void mostrarDatos(List<Persona> listaPersona) {
         listadoPersonas = listaPersona;
         modelo = new DefaultTableModel();
-        modelo.addColumn("ID"); //0
-        modelo.addColumn("Cedula");//1
-        modelo.addColumn("Nombre");//2
-        modelo.addColumn("Apellido");//3
-        modelo.addColumn("Correo");//4
-        modelo.addColumn("Fecha Nacimiento");//5
-        modelo.addColumn("Edad");//6
-        modelo.addColumn("Telefono");//7
+        modelo.addColumn("ID");              // 0
+        modelo.addColumn("Cedula");          // 1
+        modelo.addColumn("Nombre");          // 2
+        modelo.addColumn("Apellido");        // 3
+        modelo.addColumn("Correo");          // 4
+        modelo.addColumn("Fecha Nacimiento");// 5
+        modelo.addColumn("Edad");            // 6
+        modelo.addColumn("Telefono");        // 7
+        modelo.addColumn("Dirección");       // 8
 
         for (Persona pers : listaPersona) {
-            Object[] fila = {pers.getId(), pers.getCedula(), pers.getNombre(), pers.getApellido(), pers.getCorreo(), pers.getFecha_nacimiento(), pers.getEdad(), pers.getTelefono()};
+            // Como es lista de Persona, haz un cast seguro a Cliente
+            String dir = (pers instanceof Cliente)
+                    ? ((Cliente) pers).getDireccion()
+                    : "";
+            Object[] fila = {
+                pers.getId(),
+                pers.getCedula(),
+                pers.getNombre(),
+                pers.getApellido(),
+                pers.getCorreo(),
+                pers.getFecha_nacimiento(),
+                pers.getEdad(),
+                pers.getTelefono(),
+                dir // <-- aquí
+            };
             modelo.addRow(fila);
         }
         tbl_usuario.setModel(modelo);
@@ -307,7 +343,6 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
         }
     }
 
-    // Se emplea este metodo para poder limpiar el formulario
     private void LimpiarFormulario() {
         txt_apellido.setText("");
         txt_cedula.setText("");
@@ -315,121 +350,186 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
         txt_nombre.setText("");
         txt_telefono.setText("");
         txt_fecha.setText("");
+        txt_direccion.setText("");
+        checkBox_afilicacion.setSelected(false);
     }
 
     private void butt_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butt_agregarActionPerformed
-        // Si el formulario esta lleno proceder a enviarlo a la capa de negocio
-        if (ValidarFormulario()) {
-            String nombre = txt_nombre.getText();
-            String apellido = txt_apellido.getText();
-            String cedula = txt_cedula.getText();
-            String correo = txt_correo.getText();
-            String telefono = txt_telefono.getText();
-
-            // 26-09-1994
-            String fecha = txt_fecha.getText();
-            String[] fechaSeparada = fecha.split("-");
-
-            int dia = Integer.parseInt(fechaSeparada[0]);
-            int mes = Integer.parseInt(fechaSeparada[1]);
-            int anio = Integer.parseInt(fechaSeparada[2]);
-            LocalDate fechaNacimiento = LocalDate.of(anio, mes, dia);
-
-            //String nombre, String apellido, String correo, String telefono, LocalDate fecha_nacimiento, String cedula
-            Persona nuevaPersona = new Persona(nombre, apellido, correo,
-                    telefono, fechaNacimiento, cedula);
-
-            // [0] ya existe la persomna  [1] registro de persona exitoso
-            // [2] Error interno [3] la persona es menor de edad
-            int registro = servicio.AgregarNuevsPersona(nuevaPersona);
-
-            switch (registro) {
-                case 0:
-                    JOptionPane.showMessageDialog(null,
-                            "Ya existe la persona con ese número de cédula.",
-                            "Advertencia",
-                            JOptionPane.WARNING_MESSAGE);
-                    break;
-
-                case 1:
-                    JOptionPane.showMessageDialog(null,
-                            "Registro exitoso.",
-                            "Información",
-                            JOptionPane.INFORMATION_MESSAGE);
-                    // Se procede a actualizar la tabla de registro y limpiar el formulario
-                    List<Persona> lista = servicio.ObtenerPersona();
-                    mostrarDatos(lista);
-                    LimpiarFormulario();
-                    break;
-
-                case 2:
-                    JOptionPane.showMessageDialog(null,
-                            "Error interno, intentelo más tarde.",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    break;
-
-                case 3:
-                    JOptionPane.showMessageDialog(null,
-                            "El sistema solo permite registrar a mayores de edad.",
-                            "Advertencia",
-                            JOptionPane.QUESTION_MESSAGE);
-                    break;
-            }
-        } else {
-            JOptionPane.showMessageDialog(null,
+        // 1. Validar formulario
+        if (!ValidarFormulario()) {
+            JOptionPane.showMessageDialog(
+                    null,
                     "Debe completar todos los campos obligatorios.",
                     "Advertencia",
-                    JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
+
+        // 2. Leer campos
+        String nombre = txt_nombre.getText().trim();
+        String apellido = txt_apellido.getText().trim();
+        String cedula = txt_cedula.getText().trim();
+        String correo = txt_correo.getText().trim();
+        String telefono = txt_telefono.getText().trim();
+        String direccion = txt_direccion.getText().trim();
+
+        // 3. Parsear fecha
+        LocalDate fechaNacimiento;
+        try {
+            String[] p = txt_fecha.getText().trim().split("-");
+            int dia = Integer.parseInt(p[0]);
+            int mes = Integer.parseInt(p[1]);
+            int año = Integer.parseInt(p[2]);
+            fechaNacimiento = LocalDate.of(año, mes, dia);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Formato de fecha inválido. Use dd-mm-yyyy.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
+
+        // 4. Crear Cliente
+        Cliente nuevaPersona = new Cliente(
+                nombre, apellido, correo,
+                telefono, fechaNacimiento,
+                cedula, direccion
+        );
+
+        // 5. Afiliación
+        if (checkBox_afilicacion.isSelected()) {
+            Fidelidad fidelidad = new Fidelidad(
+                    nuevaPersona,
+                    0,
+                    0,
+                    LocalDate.now()
+            );
+            nuevaPersona.setFidelidad(fidelidad);
+        }
+
+        // 6. Llamar servicio
+        int registro = servicio.AgregarNuevaPersona(nuevaPersona);
+
+        // 7. Manejo de resultados
+        switch (registro) {
+            case 0:
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Ya existe la persona con ese número de cédula.",
+                        "Advertencia",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                break;
+            case 1:
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Registro exitoso.",
+                        "Información",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+                mostrarDatos(servicio.ObtenerPersona());
+                LimpiarFormulario();
+                break;
+            case 2:
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Error interno, inténtelo más tarde.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                break;
+            case 3:
+                JOptionPane.showMessageDialog(
+                        null,
+                        "El sistema solo permite registrar a mayores de edad.",
+                        "Advertencia",
+                        JOptionPane.QUESTION_MESSAGE
+                );
+                break;
+            default:
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Código de respuesta desconocido: " + registro,
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
         }
     }//GEN-LAST:event_butt_agregarActionPerformed
 
     private void butt_actualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butt_actualizarActionPerformed
-        // Se obtiene el id seleccionado de la tabla
         int filaSeleccionada = tbl_usuario.getSelectedRow();
-        // Se valdia que la fila seleccionada sea superior a cero 
-        if (filaSeleccionada >= 0) {
+        if (filaSeleccionada < 0) {
+            return; // No hay fila seleccionada
+        }
 
-            // Si el formulario esta lleno proceder a enviarlo a la capa de negocio
-            if (ValidarFormulario()) {
-                String nombre = txt_nombre.getText();
-                String apellido = txt_apellido.getText();
-                String cedula = txt_cedula.getText();
-                String correo = txt_correo.getText();
-                String telefono = txt_telefono.getText();
+        // 1. Validar formulario
+        if (!ValidarFormulario()) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Debe completar todos los campos obligatorios.",
+                    "Advertencia",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
 
-                // 26-09-1994
-                String fecha = txt_fecha.getText();
-                String[] fechaSeparada = fecha.split("-");
+        // 2. Leer campos
+        String nombre = txt_nombre.getText().trim();
+        String apellido = txt_apellido.getText().trim();
+        String cedula = txt_cedula.getText().trim();
+        String correo = txt_correo.getText().trim();
+        String telefono = txt_telefono.getText().trim();
+        String direccion = txt_direccion.getText().trim();
 
-                int dia = Integer.parseInt(fechaSeparada[0]);
-                int mes = Integer.parseInt(fechaSeparada[1]);
-                int anio = Integer.parseInt(fechaSeparada[2]);
-                LocalDate fechaNacimiento = LocalDate.of(anio, mes, dia);
+        // 3. Parsear fecha
+        LocalDate fechaNacimiento;
+        try {
+            String[] p = txt_fecha.getText().trim().split("-");
+            int dia = Integer.parseInt(p[0]);
+            int mes = Integer.parseInt(p[1]);
+            int año = Integer.parseInt(p[2]);
+            fechaNacimiento = LocalDate.of(año, mes, dia);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Formato de fecha inválido. Use dd-mm-yyyy.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
 
-                //String nombre, String apellido, String correo, String telefono, LocalDate fecha_nacimiento, String cedula
-                Persona actualizarPersona = new Persona(nombre, apellido, correo,
-                        telefono, fechaNacimiento, cedula);
+        // 4. Crear Cliente con nueva dirección
+        Cliente actualizarPersona = new Cliente(
+                nombre, apellido, correo,
+                telefono, fechaNacimiento,
+                cedula, direccion
+        );
 
-                int idPersona = listadoPersonas.get(filaSeleccionada).getId();
+        // 5. Llamar servicio de actualización
+        int idPersona = listadoPersonas.get(filaSeleccionada).getId();
+        boolean actualizado = servicio.ActualizarPersona(idPersona, actualizarPersona);
 
-                boolean actualizado = servicio.ActualizarPersona(idPersona, actualizarPersona);
-
-                if (actualizado) {
-                    JOptionPane.showMessageDialog(null,
-                            "Registro actualizado.",
-                            "Información",
-                            JOptionPane.INFORMATION_MESSAGE);
-                    List<Persona> lista = servicio.ObtenerPersona();
-                    mostrarDatos(lista);
-                    LimpiarFormulario();
-                } else {
-                    JOptionPane.showMessageDialog(null,
-                            "No se pudo actualizar el registro.",
-                            "Advertencia",
-                            JOptionPane.WARNING_MESSAGE);
-                }
-            }
+        // 6. Resultado
+        if (actualizado) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Registro actualizado.",
+                    "Información",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            mostrarDatos(servicio.ObtenerPersona());
+            LimpiarFormulario();
+        } else {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "No se pudo actualizar el registro.",
+                    "Advertencia",
+                    JOptionPane.WARNING_MESSAGE
+            );
         }
     }//GEN-LAST:event_butt_actualizarActionPerformed
 
@@ -571,7 +671,6 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_txt_telefonoKeyTyped
 
-    // Método para validar Nombre/Apellido: letras (incluye tildes/ñ) y espacios
     private void ValidarCaracteres(java.awt.event.KeyEvent evt) {
         char c = evt.getKeyChar();
 
@@ -615,6 +714,7 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
     private javax.swing.JButton butt_actualizar;
     private javax.swing.JButton butt_agregar;
     private javax.swing.JButton butt_eliminar;
+    private javax.swing.JCheckBox checkBox_afilicacion;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -622,12 +722,14 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     private org.jdesktop.swingx.JXDatePicker jXDatePicker1;
     private javax.swing.JTable tbl_usuario;
     private javax.swing.JTextField txt_apellido;
     private javax.swing.JTextField txt_cedula;
     private javax.swing.JTextField txt_correo;
+    private javax.swing.JTextField txt_direccion;
     private javax.swing.JTextField txt_fecha;
     private javax.swing.JTextField txt_nombre;
     private javax.swing.JTextField txt_telefono;

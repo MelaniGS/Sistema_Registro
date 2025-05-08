@@ -29,15 +29,15 @@ public class ProductoServicio {
         return productoDao.obtenerProductos();
     }
 
-    public boolean EliminarProductoPorId(int numId) {
-        return productoDao.EliminarProducto(numId);
+    public boolean EliminarProductoPorIdP(int numIdP) {
+        return productoDao.EliminarProducto(numIdP);
     }
 
-    public boolean ActualizarProducto(int id, Producto producto) {
-        return productoDao.ActualizarProducto(id, producto);
+    public boolean ActualizarProducto(int idP, Producto producto) {
+        return productoDao.ActualizarProducto(idP, producto);
     }
 
-    public Producto BuscarProductoPorId(int id) {
-        return productoDao.obtenerProductoPorId(id);  // Llama al método en ProductoDAO para obtener el producto por ID
+    public Producto BuscarProductoPorId(int idP) {
+        return productoDao.obtenerProductoPorId(idP);  // Llama al método en ProductoDAO para obtener el producto por ID
     }
 }

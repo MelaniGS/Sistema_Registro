@@ -409,7 +409,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel12">
       <Properties>
-        <Property name="text" type="java.lang.String" value="IVA 12%:  "/>
+        <Property name="text" type="java.lang.String" value="IVA 15%:  "/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txt_iva">

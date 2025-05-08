@@ -86,10 +86,10 @@ public class ProductoDAO {
         return result;
     }
 
-    public boolean ActualizarProducto(int id, Producto productoActualizar) {
+    public boolean ActualizarProducto(int idP, Producto productoActualizar) {
         EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
         try {
-            Producto existente = em.find(Producto.class, id);
+            Producto existente = em.find(Producto.class, idP);
             if (existente == null) {
                 return false;
             }
@@ -189,11 +189,11 @@ public class ProductoDAO {
             em.close();  // Ensure to close the EntityManager
         }
     }
-    public Producto obtenerProductoPorId(int id) {
+    public Producto obtenerProductoPorId(int idP) {
     EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
     try {
         // Buscar el producto por su ID usando el método find de JPA
-        return em.find(Producto.class, id);  // Devuelve el producto que coincide con el ID
+        return em.find(Producto.class, idP);  // Devuelve el producto que coincide con el ID
     } finally {
         em.close();  // Asegúrate de cerrar la conexión
     }
