@@ -4,7 +4,6 @@
  */
 package ec.edu.mcguaman.sistemaregistro.Datos;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
@@ -113,4 +112,31 @@ public class ProductoDAO {
         }
     }
 
+    /**
+     * Ajusta el stock de un producto dado su ID.
+     *
+     * @param idP ID interno del producto.
+     * @param delta Cambio en stock (negativo para restar).
+     * @return true si se aplicó y el stock resultante es >= 0.
+     */
+    public boolean ajustarStock(int idP, int delta) {
+        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            Producto p = em.find(Producto.class, idP);
+            if (p == null || p.getStock() + delta < 0) {
+                return false;
+            }
+            em.getTransaction().begin();
+            p.setStock(p.getStock() + delta);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            return false;
+        } finally {
+            em.close();
+        }
+    }
 }

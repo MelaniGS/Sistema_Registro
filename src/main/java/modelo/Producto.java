@@ -33,13 +33,17 @@ public class Producto {
     @Column(nullable = false)
     private Double precio;
 
+    @Column(nullable = false)
+    private int stock;
+
     public Producto() {
     }
 
-    public Producto(String codigo, String nombre, Double precio) {
+    public Producto(String codigo, String nombre, Double precio, int stock) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.precio = precio;
+        this.stock = stock;
     }
 
     public int getIdP() {
@@ -72,6 +76,14 @@ public class Producto {
 
     public void setPrecio(Double precio) {
         this.precio = precio;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 
 }

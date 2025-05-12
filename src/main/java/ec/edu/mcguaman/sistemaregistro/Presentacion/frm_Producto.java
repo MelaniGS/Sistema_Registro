@@ -44,13 +44,15 @@ public class frm_Producto extends javax.swing.JInternalFrame {
         modelo.addColumn("Código");
         modelo.addColumn("Nombre");
         modelo.addColumn("Precio");
+        modelo.addColumn("Stock Disponible");
 
         for (Producto prod : lista) {
             Object[] fila = {
                 prod.getIdP(),
                 prod.getCodigo(),
                 prod.getNombre(),
-                prod.getPrecio()
+                prod.getPrecio(),
+                prod.getStock()
             };
             modelo.addRow(fila);
         }
@@ -70,7 +72,6 @@ public class frm_Producto extends javax.swing.JInternalFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         txt_codigo = new javax.swing.JTextField();
-        txt_nombre = new javax.swing.JTextField();
         txt_precio = new javax.swing.JTextField();
         btn_agregar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -79,6 +80,9 @@ public class frm_Producto extends javax.swing.JInternalFrame {
         btn_actualizar = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         btn_limpiar = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        txt_stock = new javax.swing.JTextField();
+        txt_nombre = new javax.swing.JTextField();
 
         setClosable(true);
         setIconifiable(true);
@@ -101,14 +105,6 @@ public class frm_Producto extends javax.swing.JInternalFrame {
         txt_codigo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txt_codigoKeyTyped(evt);
-            }
-        });
-
-        txt_nombre.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txt_nombre.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txt_nombre.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txt_nombreKeyTyped(evt);
             }
         });
 
@@ -177,36 +173,53 @@ public class frm_Producto extends javax.swing.JInternalFrame {
             }
         });
 
+        jLabel5.setFont(new java.awt.Font("Cambria Math", 0, 16)); // NOI18N
+        jLabel5.setText("Cantidad Disponible:");
+
+        txt_stock.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_stock.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txt_stock.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_stockKeyTyped(evt);
+            }
+        });
+
+        txt_nombre.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_nombre.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(btn_agregar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(btn_eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(btn_limpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(btn_actualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel3)))
-                            .addComponent(txt_nombre, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(txt_precio, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txt_codigo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1)
+                                .addComponent(btn_actualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 1, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(txt_precio, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txt_codigo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)
+                            .addComponent(txt_stock, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_nombre))))
+                .addGap(9, 9, 9)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(262, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addGap(65, 65, 65))
         );
@@ -215,21 +228,25 @@ public class frm_Producto extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_codigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(2, 2, 2)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_precio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_stock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btn_agregar)
                             .addComponent(btn_eliminar))
@@ -255,34 +272,33 @@ public class frm_Producto extends javax.swing.JInternalFrame {
         try {
             String codigo = txt_codigo.getText().trim();
             String nombre = txt_nombre.getText().trim();
-            Double precio = Double.parseDouble(txt_precio.getText().trim());
-            Producto prod = new Producto(codigo, nombre, precio);
+            double precio = Double.parseDouble(txt_precio.getText().trim());
+            int stock = Integer.parseInt(txt_stock.getText().trim());
+
+            Producto prod = new Producto(codigo, nombre, precio, stock);
             int res = servicio.agregarProducto(prod);
             switch (res) {
-                case 1:
+                case 1 ->
                     JOptionPane.showMessageDialog(this,
                             "Producto registrado.",
                             "Información",
                             JOptionPane.INFORMATION_MESSAGE);
-                    break;
-                case 0:
+                case 0 ->
                     JOptionPane.showMessageDialog(this,
                             "Código ya registrado.",
                             "Advertencia",
                             JOptionPane.WARNING_MESSAGE);
-                    break;
-                case 2:
+                case 2 ->
                     JOptionPane.showMessageDialog(this,
                             "Error interno.",
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
-                    break;
             }
             listarYMostrar();
             limpiarFormulario();
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this,
-                    "Precio inválido.",
+                    "Precio o stock inválido.",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -307,6 +323,7 @@ public class frm_Producto extends javax.swing.JInternalFrame {
         listarYMostrar();
         limpiarFormulario();
     }//GEN-LAST:event_btn_eliminarActionPerformed
+
     private void llenarFormularioDesdeTabla() {
         int idx = tbl_producto.getSelectedRow();
         if (idx < 0) {
@@ -315,8 +332,10 @@ public class frm_Producto extends javax.swing.JInternalFrame {
         Producto prod = listadoProductos.get(idx);
         txt_codigo.setText(prod.getCodigo());
         txt_nombre.setText(prod.getNombre());
-        txt_precio.setText(prod.getPrecio().toString());
+        txt_precio.setText(String.valueOf(prod.getPrecio()));
+        txt_stock.setText(String.valueOf(prod.getStock()));
     }
+
 
     private void btn_actualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_actualizarActionPerformed
         int idx = tbl_producto.getSelectedRow();
@@ -333,8 +352,10 @@ public class frm_Producto extends javax.swing.JInternalFrame {
         try {
             String codigo = txt_codigo.getText().trim();
             String nombre = txt_nombre.getText().trim();
-            Double precio = Double.parseDouble(txt_precio.getText().trim());
-            Producto prod = new Producto(codigo, nombre, precio);
+            double precio = Double.parseDouble(txt_precio.getText().trim());
+            int stock = Integer.parseInt(txt_stock.getText().trim());
+
+            Producto prod = new Producto(codigo, nombre, precio, stock);
             boolean ok = servicio.actualizarProducto(prod);
             JOptionPane.showMessageDialog(this,
                     ok ? "Producto actualizado." : "Error al actualizar.",
@@ -344,7 +365,7 @@ public class frm_Producto extends javax.swing.JInternalFrame {
             limpiarFormulario();
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this,
-                    "Precio inválido.",
+                    "Precio o stock inválido.",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -360,35 +381,45 @@ public class frm_Producto extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btn_limpiarActionPerformed
 
     private void txt_codigoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_codigoKeyTyped
-
+        char caracter = evt.getKeyChar();
+        if (caracter < '0' || caracter > '9') {
+            evt.consume();
+        }
+        if (txt_codigo.getText().length() > 9) {
+            evt.consume();
+        }
     }//GEN-LAST:event_txt_codigoKeyTyped
 
-    private void txt_nombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_nombreKeyTyped
-        char c = evt.getKeyChar();
-        // Permitir controles (Backspace, Delete, flechas…)
-        if (Character.isISOControl(c)) {
-            return;
-        }
-        // Solo letras y espacios (incluye letras con tildes, ñ, Ñ)
-        if (!Character.isLetter(c) && c != ' ') {
-            evt.consume();
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Error: Sólo se permiten letras, tildes y espacios en este campo.",
-                    "Carácter no válido",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-    }//GEN-LAST:event_txt_nombreKeyTyped
-
     private void txt_precioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_precioKeyTyped
-
+        char c = evt.getKeyChar();
+        if (!Character.isDigit(c) && c != '.' && c != ',' && !Character.isISOControl(c)) {
+            evt.consume();
+        }
+        String text = txt_precio.getText();
+        if ((c == '.' || c == ',') && (text.contains(".") || text.contains(","))) {
+            evt.consume();
+        }
+        if (text.length() >= 10 && !Character.isISOControl(c)) {
+            evt.consume();
+        }
     }//GEN-LAST:event_txt_precioKeyTyped
+
+    private void txt_stockKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_stockKeyTyped
+        // TODO add your handling code here:
+        char caracter = evt.getKeyChar();
+        if (caracter < '0' || caracter > '9') {
+            evt.consume();
+        }
+        if (txt_stock.getText().length() > 9) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_txt_stockKeyTyped
 
     private void limpiarFormulario() {
         txt_codigo.setText("");
         txt_nombre.setText("");
         txt_precio.setText("");
+        txt_stock.setText("");
     }
 
     private boolean validarFormulario() {
@@ -413,6 +444,12 @@ public class frm_Producto extends javax.swing.JInternalFrame {
         } else {
             txt_precio.setBorder(negro);
         }
+        if (txt_stock.getText().trim().isEmpty()) {
+            txt_stock.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_stock.setBorder(negro);
+        }
         return ok;
     }
 
@@ -425,10 +462,12 @@ public class frm_Producto extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tbl_producto;
     private javax.swing.JTextField txt_codigo;
     private javax.swing.JTextField txt_nombre;
     private javax.swing.JTextField txt_precio;
+    private javax.swing.JTextField txt_stock;
     // End of variables declaration//GEN-END:variables
 }

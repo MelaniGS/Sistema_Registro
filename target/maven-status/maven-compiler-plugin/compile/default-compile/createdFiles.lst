@@ -2,6 +2,7 @@ ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Cliente$4.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Empleado$4.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Producto$4.class
 ec\edu\mcguaman\sistemaregistro\Datos\FacturaDAO.class
+ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Cliente$12.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_SistemaFactura$1.class
 ec\edu\mcguaman\sistemaregistro\Negocio\EmpleadoServicio.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_SistemaFactura$8.class
@@ -26,6 +27,7 @@ ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Empleado$5.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_SistemaFactura$9.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\SistemaRegistro$3.class
 ec\edu\mcguaman\sistemaregistro\Negocio\FacturaServicio.class
+ec\edu\mcguaman\sistemaregistro\Presentacion\frm_SistemaFactura$10.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_SistemaFactura$3.class
 ec\edu\mcguaman\sistemaregistro\Negocio\ClienteServicio.class
 ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Cliente$10.class

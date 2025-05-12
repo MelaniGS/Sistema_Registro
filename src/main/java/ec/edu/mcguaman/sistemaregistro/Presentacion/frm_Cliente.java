@@ -196,6 +196,11 @@ public class frm_Cliente extends javax.swing.JInternalFrame {
         jLabel8.setText("Dirección:");
 
         txt_direccion.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txt_direccion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_direccionActionPerformed(evt);
+            }
+        });
         txt_direccion.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txt_direccionKeyTyped(evt);
@@ -558,6 +563,10 @@ public class frm_Cliente extends javax.swing.JInternalFrame {
     private void txt_direccionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_direccionKeyTyped
         ValidarCaracteres(evt);
     }//GEN-LAST:event_txt_direccionKeyTyped
+
+    private void txt_direccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_direccionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_direccionActionPerformed
 
     private void ValidarCaracteres(java.awt.event.KeyEvent evt) {
         char c = evt.getKeyChar();

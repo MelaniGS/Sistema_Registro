@@ -6,6 +6,7 @@ package ec.edu.mcguaman.sistemaregistro.Presentacion;
 
 import ec.edu.mcguaman.sistemaregistro.Negocio.FacturaServicio;
 import ec.edu.mcguaman.sistemaregistro.Negocio.PersonaServicio;
+import ec.edu.mcguaman.sistemaregistro.Negocio.ProductoServicio;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -21,16 +22,14 @@ import modelo.Producto;
  */
 public class frm_SistemaFactura extends javax.swing.JInternalFrame {
 
-    private List<DetalleFactura> detallesFactura = new ArrayList();
-    private Producto productoEncontrado;
+    private final FacturaServicio servicio;
+    private final ProductoServicio prodServicio;
+    private final PersonaServicio personaServicio;
+    private final List<DetalleFactura> detallesFactura;
+
     private Persona personaEncontrada;
-
+    private Producto productoEncontrado;
     public static DefaultTableModel modelo;
-
-    // Crea una instancia de la clase FacturaServicio
-    private FacturaServicio servicio;
-
-    private PersonaServicio servicioPersona;
 
     /**
      * Creates new form SistemaFactura
@@ -38,41 +37,25 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
     public frm_SistemaFactura() {
         initComponents();
         servicio = new FacturaServicio();
-        servicioPersona = new PersonaServicio();
+        prodServicio = new ProductoServicio();
+        personaServicio = new PersonaServicio();
+        detallesFactura = new ArrayList<>();
 
-        // Deshabilitar los botones y campos de texto al inicio
-        this.btn_buscarCedPersona.setEnabled(false);
-        this.btn_buscarCodProducto.setEnabled(false);
-        //this.btn_AgregarPersona.setEnabled(false);
-        //this.btn_EliminarPersona.setEnabled(false);
-        //this.btn_LimpiarPersona.setEnabled(false);
-        this.btn_agregarProducto.setEnabled(false);
-        this.btn_EliminarProducto.setEnabled(false);
-        this.btn_limpiarTextoProductos.setEnabled(false);
-        this.btn_RegistrarFactura.setEnabled(false);
+        // Inicializar botones y tablas
+        btn_buscarCedPersona.setEnabled(true);
+        btn_buscarCodProducto.setEnabled(false);
+        btn_agregarProducto.setEnabled(false);
+        btn_EliminarProducto.setEnabled(false);
+        btn_limpiarTextoProductos.setEnabled(false);
+        btn_RegistrarFactura.setEnabled(false);
 
-        this.txt_CedCliente.setEnabled(true);
+        DefaultTableModel prodModel = new DefaultTableModel(
+                new String[]{"Código", "ID", "Producto", "Cantidad", "Precio U", "Total"}, 0);
+        tbl_productos.setModel(prodModel);
 
-        this.btn_buscarCedPersona.setEnabled(true);
-
-        // Inicializar las tablas de productos y factura
-        DefaultTableModel productoModel = new DefaultTableModel();
-        productoModel.addColumn("Código Producto");
-        productoModel.addColumn("ID Producto");
-        productoModel.addColumn("Producto");
-        productoModel.addColumn("Cantidad");
-        productoModel.addColumn("Precio Unitario");
-        productoModel.addColumn("Total");
-        tbl_productos.setModel(productoModel);
-
-        DefaultTableModel facturaModel = new DefaultTableModel();
-        facturaModel.addColumn("ID Cliente");
-        facturaModel.addColumn("Nombre");
-        facturaModel.addColumn("Apellido");
-        facturaModel.addColumn("Cédula");
-        facturaModel.addColumn("Correo Electrónico");
-        facturaModel.addColumn("Total");
-        tbl_Factura.setModel(facturaModel);
+        DefaultTableModel factModel = new DefaultTableModel(
+                new String[]{"ID Cliente", "Nombre", "Apellido", "Cédula", "Correo", "Total"}, 0);
+        tbl_Factura.setModel(factModel);
 
     }
 
@@ -163,6 +146,11 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
 
         jLabel4.setText("Precio:");
 
+        txt_cantidad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_cantidadActionPerformed(evt);
+            }
+        });
         txt_cantidad.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txt_cantidadKeyTyped(evt);
@@ -434,6 +422,7 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_agregarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarProductoActionPerformed
+        System.out.println("btn_agregarProducto clickeado. productoEncontrado = " + productoEncontrado);
         AgregarDetalleProducto();
         LimpiarDetallesProductos();
     }//GEN-LAST:event_btn_agregarProductoActionPerformed
@@ -488,6 +477,10 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_txt_cantidadKeyTyped
 
+    private void txt_cantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_cantidadActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_cantidadActionPerformed
+
     private void BuscarCedPersona() {
         String cedula = this.txt_CedCliente.getText();
         this.personaEncontrada = this.servicio.buscarPersonaPorCedula(cedula);
@@ -532,102 +525,134 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
     }
 
     private void AgregarDetalleProducto() {
-        int cantidad = Integer.parseInt(this.txt_cantidad.getText());
-
-        if (this.productoEncontrado != null) {
-            float precioUnitario = this.productoEncontrado.getPrecio().floatValue();
-            float total = cantidad * precioUnitario;
-
-            DefaultTableModel model = (DefaultTableModel) tbl_productos.getModel();
-            boolean productoExistente = false;
-
-            for (int i = 0; i < model.getRowCount(); i++) {
-                if (model.getValueAt(i, 1).equals(this.productoEncontrado.getIdP())) {
-                    int cantidadExistente = (int) model.getValueAt(i, 3);
-                    float totalExistente = (float) model.getValueAt(i, 5);
-
-                    model.setValueAt(cantidadExistente + cantidad, i, 3);
-                    model.setValueAt(totalExistente + total, i, 5);
-                    productoExistente = true;
-                    break;
-                }
-            }
-
-            if (!productoExistente) {
-                Object[] row = {this.productoEncontrado.getCodigo(), this.productoEncontrado.getIdP(), this.productoEncontrado.getNombre(),
-                    cantidad, precioUnitario, total};
-                model.addRow(row);
-            }
-            DetalleFactura detalle = new DetalleFactura();
-            detalle.setProducto(this.productoEncontrado);
-            detalle.setCantidad(cantidad);
-            detalle.setTotal(total);
-            detallesFactura.add(detalle);
-
-            this.btn_RegistrarFactura.setEnabled(true);
-            DetallesFactura();
+        if (productoEncontrado == null) {
+            JOptionPane.showMessageDialog(this, "Primero busca un producto.", "Atención", JOptionPane.WARNING_MESSAGE);
+            return;
         }
+        int cantidad;
+        try {
+            cantidad = Integer.parseInt(txt_cantidad.getText().trim());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Cantidad inválida.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (!prodServicio.hayStock(productoEncontrado.getCodigo(), cantidad)) {
+            JOptionPane.showMessageDialog(this,
+                "Stock insuficiente: " + productoEncontrado.getStock(), "Sin stock", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        DefaultTableModel model = (DefaultTableModel) tbl_productos.getModel();
+        float precioUnit = productoEncontrado.getPrecio().floatValue();
+        float totalLinea = cantidad * precioUnit;
+        boolean existe = false;
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if ((int) model.getValueAt(i,1) == productoEncontrado.getIdP()) {
+                int q = (int)model.getValueAt(i,3) + cantidad;
+                float t = (float)model.getValueAt(i,5) + totalLinea;
+                model.setValueAt(q, i, 3);
+                model.setValueAt(t, i, 5);
+                existe = true;
+                break;
+            }
+        }
+        if (!existe) {
+            model.addRow(new Object[]{
+                productoEncontrado.getCodigo(),
+                productoEncontrado.getIdP(),
+                productoEncontrado.getNombre(),
+                cantidad,
+                precioUnit,
+                totalLinea
+            });
+        }
+        DetalleFactura detalle = new DetalleFactura();
+        detalle.setProducto(productoEncontrado);
+        detalle.setCantidad(cantidad);
+        detalle.setTotal(totalLinea);
+        detallesFactura.add(detalle);
+        actualizarDetallesFactura();
+        btn_RegistrarFactura.setEnabled(true);
     }
 
-    private void DetallesFactura() {
+    
+
+    private void actualizarDetallesFactura() {
         float subtotal = 0;
-        DefaultTableModel model = (DefaultTableModel) tbl_productos.getModel();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            float totalProducto = (float) model.getValueAt(i, 5);  
-            subtotal += totalProducto;  
+        DefaultTableModel prodModel = (DefaultTableModel) tbl_productos.getModel();
+        for (int r = 0; r < prodModel.getRowCount(); r++) {
+            subtotal += (float) prodModel.getValueAt(r, 5);
         }
-
-        float iva = subtotal * 0.15f;  
+        float iva = subtotal * 0.15f;
         float total = subtotal + iva;
-
-        txt_subtotal.setText(String.format("%.2f", subtotal));  
-        txt_iva.setText(String.format("%.2f", iva));            
+        txt_subtotal.setText(String.format("%.2f", subtotal));
+        txt_iva.setText(String.format("%.2f", iva));
         txt_total.setText(String.format("%.2f", total));
 
-        DefaultTableModel facturaModel = (DefaultTableModel) tbl_Factura.getModel();
-        facturaModel.setRowCount(0);  // Limpiar la tabla de factura
-        Object[] filaFactura = {
-            this.personaEncontrada.getId(),
-            this.personaEncontrada.getNombre(),
-            this.personaEncontrada.getApellido(),
-            this.personaEncontrada.getCedula(),
-            this.personaEncontrada.getCorreo(),
+        DefaultTableModel factModel = (DefaultTableModel) tbl_Factura.getModel();
+        factModel.setRowCount(0);
+        factModel.addRow(new Object[]{
+            personaEncontrada.getId(),
+            personaEncontrada.getNombre(),
+            personaEncontrada.getApellido(),
+            personaEncontrada.getCedula(),
+            personaEncontrada.getCorreo(),
             total
-        };
-        facturaModel.addRow(filaFactura);
+        });
     }
 
     private void EliminarProducto() {
-        int selectedRow = tbl_productos.getSelectedRow();
-
-        if (selectedRow != -1) {
-            int idP = (int) tbl_productos.getValueAt(selectedRow, 1);
-
-            DefaultTableModel model = (DefaultTableModel) tbl_productos.getModel();
-            model.removeRow(selectedRow);  // Eliminar el producto de la tabla
-            for (DetalleFactura detalle : detallesFactura) {
-                if (detalle.getProducto().getIdP() == idP) {  // Comparamos con el ID del producto
-                    detallesFactura.remove(detalle);  // Eliminar el detalle de la lista
-                    break;  // Salir del bucle una vez encontrado el detalle
-                }
-            }
-            DetallesFactura();
-        } else {
-            JOptionPane.showMessageDialog(this, "Por favor selecciona un producto para eliminar.");
+        int row = tbl_productos.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, "Selecciona un producto para eliminar.");
+            return;
         }
+        int idP = (int) tbl_productos.getValueAt(row, 1);
+        ((DefaultTableModel) tbl_productos.getModel()).removeRow(row);
+        detallesFactura.removeIf(d -> d.getProducto().getIdP() == idP);
+        actualizarDetallesFactura();
     }
 
     private void RegistrarFactura() {
-        if (this.personaEncontrada != null && !detallesFactura.isEmpty()) {
-            Factura nuevaFactura = new Factura(this.personaEncontrada, detallesFactura);
+        // 1) Chequeos previos
+        if (personaEncontrada == null || detallesFactura.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Debe seleccionar persona y agregar productos.");
+            return;
+        }
 
-            servicio.registrarFactura(nuevaFactura);  // El servicio se encargará de calcular el monto total
-            LimpiarTablas();  // Limpiar las tablas de productos y factura
-            LimpiarCalculos();  // Limpiar los campos de calculo (subtotal, iva, total)
-            LimpiarPersona();
-            JOptionPane.showMessageDialog(null, "Factura registrada con éxito.");
+        // 2) Crear y persistir factura
+        Factura nuevaFactura = new Factura(personaEncontrada, detallesFactura);
+        int res = servicio.registrarFactura(nuevaFactura);
+
+        if (res == 0) {
+            // 3) Descontar stock usando prodServicio (¡no servicio!)
+            detallesFactura.forEach(d
+                    -> prodServicio.descontarStock(
+                            d.getProducto().getCodigo(),
+                            d.getCantidad()
+                    )
+            );
+
+            JOptionPane.showMessageDialog(this,
+                    "Factura registrada y stock actualizado.");
+
+            // 4) Limpieza de UI…
+            btn_limpiarTextoProductosActionPerformed(null);
+            txt_CedCliente.setText("");
+            txt_nombre.setText("");
+            txt_apellido.setText("");
+            txt_idClilente.setText("");
+            txt_CodProduct.setText("");
+            txt_nombreProducto.setText("");
+            txt_IdProducto.setText("");
+            txt_cantidad.setText("");
+            txt_precio.setText("");
+            btn_buscarCodProducto.setEnabled(false);
+            btn_agregarProducto.setEnabled(false);
+
         } else {
-            JOptionPane.showMessageDialog(null, "Debe seleccionar una persona y agregar al menos un producto.");
+            JOptionPane.showMessageDialog(this,
+                    "Error al registrar factura.");
         }
     }
 
@@ -642,11 +667,15 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
     }
 
     private void LimpiarDetallesProductos() {
-        txt_CodProduct.setText("");
-        txt_nombreProducto.setText("");
-        txt_IdProducto.setText("");
-        txt_cantidad.setText("");
-        txt_precio.setText("");
+        DefaultTableModel model = (DefaultTableModel) tbl_productos.getModel();
+        model.setRowCount(0);
+        DefaultTableModel factModel = (DefaultTableModel) tbl_Factura.getModel();
+        factModel.setRowCount(0);
+        detallesFactura.clear();
+        txt_subtotal.setText("");
+        txt_iva.setText("");
+        txt_total.setText("");
+        btn_RegistrarFactura.setEnabled(false);
     }
 
     private void LimpiarCalculos() {
