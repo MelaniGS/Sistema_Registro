@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,72 +19,75 @@ import java.util.List;
  */
 public class PersonaServicio {
 
+    private static final Logger LOGGER = Logger.getLogger(PersonaServicio.class.getName());
     private final PersonaDAO personaDao;
 
     public PersonaServicio() {
         this.personaDao = new PersonaDAO();
     }
 
-//    public void AgregarNuevaPersona(Persona persona){
-//        try{
-//            personaDao.agregarPersona(persona);
-//        }catch(SQLException ex){
-//            System.out.println("Error en capa de negocio: No se puede agregar persona " + ex);
-//        }
-//    }
-    // [0] ya existe la persona  [1] registro de persona exitoso
-    // [2] Error interno [3] la persona es menor de edad
-    public int AgregarNuevaPersona(Persona persona) {
-        LocalDate fecha_nacimiento = persona.getFecha_nacimiento();
-
-        // se verifica que la persona sea mayor de edad para registrar
-        if (calcularEdad(fecha_nacimiento) >= 18) {
-            persona.setEdad(calcularEdad(fecha_nacimiento));
-            // Ajusto el nombre y apellido para almacenarlo en formato de MAY.
-            String nombrePersona = persona.getNombre().toUpperCase(); // Mayusculas
-            persona.setNombre(nombrePersona);
-
-            String apellidoPersona = persona.getApellido().toUpperCase(); // Minusculas
-            persona.setApellido(apellidoPersona);
-
-            return personaDao.RegistrarPersona(persona);
-        } else {
+    /**
+     * Agrega una nueva Persona tras validar edad y normalizar datos.
+     *
+     * @param persona La entidad Persona a agregar.
+     * @return 0 si ya existe, 1 si éxito, 2 si error BD, 3 si menor de edad.
+     */
+    public int agregarPersona(Persona persona) {
+        prepararParaGuardar(persona);
+        if (persona.getEdad() < 18) {
             return 3;
         }
+        return personaDao.registrarPersona(persona);
     }
 
-    public List<Persona> ObtenerPersona() {
-        return personaDao.obtenerPersona();
+    /**
+     * Obtiene todas las Personas.
+     */
+    public List<Persona> obtenerPersonas() {
+        return personaDao.listarPersonas();
     }
-//
-//    // Este metodo permite devolver todas las personas registradas en el sistema
-//    public List<Persona> ListarPersonas(){
-//        return PersonaDAO.ListarPersonasRegistradas();
-//    }
 
-    public int calcularEdad(LocalDate fechaNacimiento) {
-        if (fechaNacimiento == null) {
-            return 0;
+    /**
+     * Busca una Persona por cédula.
+     */
+    public Persona buscarPersonaPorCedula(String cedula) {
+        return personaDao.buscarPersonaPorCedula(cedula);
+    }
+
+    /**
+     * Actualiza una Persona existente.
+     */
+    public boolean actualizarPersona(Persona persona) {
+        prepararParaGuardar(persona);
+        return personaDao.actualizarPersona(persona);
+    }
+
+    /**
+     * Elimina una Persona por ID.
+     */
+    public boolean eliminarPersonaPorId(int id) {
+        return personaDao.eliminarPersona(id);
+    }
+
+    /**
+     * Normaliza datos y calcula edad.
+     */
+    private void prepararParaGuardar(Persona persona) {
+        LocalDate fn = persona.getFecha_nacimiento();
+        if (fn != null) {
+            int edad = Period.between(fn, LocalDate.now()).getYears();
+            persona.setEdad(edad);
+            LOGGER.info("Edad calculada: " + edad);
         }
-
-        LocalDate actual = LocalDate.now();
-        System.out.println("edad -> " + Period.between(fechaNacimiento, actual).getYears());
-        return Period.between(fechaNacimiento, actual).getYears();
-    }
-
-    public boolean EliminarPersonaPorId(int numId) {
-        return personaDao.EliminarPersona(numId);
-    }
-
-    public boolean ActualizarPersona(int id, Persona persona) {
-        LocalDate fecha_nacimiento = persona.getFecha_nacimiento();
-        persona.setEdad(calcularEdad(fecha_nacimiento));
-        return personaDao.ActualizarPersona(id, persona);
-    }
-
-    // Clase PersonaServicio
-    public Persona BuscarPersonaPorCedula(String cedula) {
-        return personaDao.obtenerPersonaPorCed(cedula); 
+        if (persona.getNombre() != null) {
+            persona.setNombre(persona.getNombre().toUpperCase());
+        }
+        if (persona.getApellido() != null) {
+            persona.setApellido(persona.getApellido().toUpperCase());
+        }
+        if (persona.getCorreo() != null) {
+            persona.setCorreo(persona.getCorreo().toLowerCase());
+        }
     }
 
 }

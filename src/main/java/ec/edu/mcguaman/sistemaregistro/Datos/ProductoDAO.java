@@ -6,6 +6,7 @@ package ec.edu.mcguaman.sistemaregistro.Datos;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import modelo.Producto;
@@ -17,186 +18,99 @@ import util.persistenceUtil;
  */
 public class ProductoDAO {
 
-    public void AgregarProducto(Producto producto) {
+    private static final Logger LOGGER = Logger.getLogger(ProductoDAO.class.getName());
 
+    public int registrarProducto(Producto producto) {
         EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
         try {
+            long count = em.createQuery(
+                    "SELECT COUNT(p) FROM Producto p WHERE p.codigo = :cod", Long.class)
+                    .setParameter("cod", producto.getCodigo())
+                    .getSingleResult();
+            if (count > 0) {
+                return 0;
+            }
+
             em.getTransaction().begin();
             em.persist(producto);
             em.getTransaction().commit();
-
+            return 1;
         } catch (Exception ex) {
-            em.getTransaction().rollback();
-            System.err.println("Error de sesion de trabajo" + ex.getMessage());
-
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            LOGGER.severe("Error al registrar Producto: " + ex.getMessage());
+            return 2;
         } finally {
             em.close();
         }
     }
 
-    public List<Producto> obtenerProductos() {
+    public List<Producto> listarProductos() {
         EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
-        List<Producto> productos = new ArrayList<>();
-
         try {
-            em.getTransaction().begin();
-            productos = em.createQuery("SELECT p FROM Producto p", Producto.class).getResultList();
-            em.getTransaction().commit();
-        } catch (Exception ex) {
-            em.getTransaction().rollback();
-            System.err.println("Error al obtener productos: " + ex.getMessage());
+            return em.createQuery("SELECT p FROM Producto p", Producto.class)
+                    .getResultList();
         } finally {
             em.close();
         }
-
-        return productos;
     }
 
-    public int VerificarAgregarProducto(Producto productoAgregar) {
-        int result = 0;
-        // Inicia la sesion de trabajo con la base de datos
+    public Producto buscarProductoPorCodigo(String codigo) {
         EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
         try {
-            Producto productoExiste = em.createQuery(
+            return em.createQuery(
                     "SELECT p FROM Producto p WHERE p.codigo = :cod", Producto.class)
-                    .setParameter("cod", productoAgregar.getCodigo())
-                    .getSingleResult();
-
-            if (productoExiste != null) {
-                System.out.println("YA EXISTE EL PRODUCTO");
-                em.close();
-                return result;
-            }
-        } catch (NoResultException ex) {
-            // Se inicia la transicion
-            em.getTransaction().begin();
-            // Se inserta la persona
-            em.persist(productoAgregar);
-            // Confirmar y guardar los cambios
-            em.getTransaction().commit();
-            result = 1;
-        } catch (Exception ex) {
-            // Revertir todo, no guardar nada
-            em.getTransaction().rollback();
-            System.err.println("Error de sesion de trabajo: " + ex.getMessage());
-            result = 2;
-        } finally {
-            em.close();
-        }
-        return result;
-    }
-
-    public boolean ActualizarProducto(int idP, Producto productoActualizar) {
-        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
-        try {
-            Producto existente = em.find(Producto.class, idP);
-            if (existente == null) {
-                return false;
-            }
-
-            em.getTransaction().begin();
-            existente.setNombre(productoActualizar.getNombre());
-            existente.setCodigo(productoActualizar.getCodigo());
-            existente.setPrecio(productoActualizar.getPrecio());
-            // em.merge(personaActualizar);
-            em.getTransaction().commit();
-            return true;
-
-        } catch (Exception ex) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            return false;
-        } finally {
-            em.close();
-        }
-    }
-
-    // Eliminar persona
-    // Si retorna true se elimino el registro, false no se pudo eliminar
-    public boolean EliminarProducto(int numId) {
-        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
-        try {
-            Producto producto = em.find(Producto.class, numId);
-
-            if (producto == null) {
-                return false;
-            }
-
-            em.getTransaction().begin();
-            em.remove(producto);
-            em.getTransaction().commit();
-            return true;
-
-        } catch (Exception ex) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            return false;
-        } finally {
-            em.close();
-        }
-    }
-
-    public int RegistrarProducto(Producto productoAgregar) {
-        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
-
-        try {
-            // 🔧 Corrección: usar COUNT(p) para obtener un Long
-            Long count = em.createQuery(
-                    "SELECT COUNT(p) FROM Producto p WHERE p.codigo = :cod", Long.class)
-                    .setParameter("cod", productoAgregar.getCodigo())
-                    .getSingleResult();
-
-            if (count > 0) {
-                return 0; // Ya existe el producto con ese código
-            }
-
-            em.getTransaction().begin();
-            em.persist(productoAgregar);
-            em.getTransaction().commit();
-
-            return 1; // Insertado correctamente
-        } catch (Exception ex) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            ex.printStackTrace(); // ✅ Agrega trazabilidad del error
-            return 2; // Error
-        } finally {
-            em.close();
-        }
-    }
-    // Devuelve en una lista todos los productos
-    public List<Producto> ListarProductosRegistrados() {
-        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();  // Updated to use persistenceUtil
-        try {
-            return em.createQuery("SELECT p FROM Producto p", Producto.class).getResultList();
-        } finally {
-            em.close();  // Ensure to close the EntityManager
-        }
-    }
-
-    public Producto BuscarProductoPorCodigo(String codigo) {
-        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();  // Updated to use persistenceUtil
-        try {
-            return em.createQuery("SELECT p FROM Producto p WHERE p.codigo = :cod", Producto.class)
                     .setParameter("cod", codigo)
                     .getSingleResult();
         } catch (NoResultException ex) {
-            return null;  // Return null if no result is found
+            return null;
         } finally {
-            em.close();  // Ensure to close the EntityManager
+            em.close();
         }
     }
-    public Producto obtenerProductoPorId(int idP) {
-    EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
-    try {
-        // Buscar el producto por su ID usando el método find de JPA
-        return em.find(Producto.class, idP);  // Devuelve el producto que coincide con el ID
-    } finally {
-        em.close();  // Asegúrate de cerrar la conexión
+
+    public boolean actualizarProducto(Producto producto) {
+        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            if (em.find(Producto.class, producto.getIdP()) == null) {
+                return false;
+            }
+            em.getTransaction().begin();
+            em.merge(producto);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            LOGGER.severe("Error al actualizar Producto: " + ex.getMessage());
+            return false;
+        } finally {
+            em.close();
+        }
     }
-}
+
+    public boolean eliminarProducto(int idP) {
+        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            Producto prod = em.find(Producto.class, idP);
+            if (prod == null) {
+                return false;
+            }
+            em.getTransaction().begin();
+            em.remove(prod);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            LOGGER.severe("Error al eliminar Producto: " + ex.getMessage());
+            return false;
+        } finally {
+            em.close();
+        }
+    }
 
 }

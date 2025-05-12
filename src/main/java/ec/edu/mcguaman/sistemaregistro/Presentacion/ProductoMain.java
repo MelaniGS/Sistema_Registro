@@ -13,6 +13,6 @@ public class ProductoMain {
     public static void main(String[] args) {
         ProductoServicio servicio = new ProductoServicio();
         Producto p1 = new Producto("002", "mouse", 5.00);
-        servicio.AgregarNuevoProducto(p1);
+        servicio.agregarProducto(p1);
     }
 }

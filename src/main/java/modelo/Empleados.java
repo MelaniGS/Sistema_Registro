@@ -26,16 +26,19 @@ public class Empleados extends Persona {
 
     private LocalDate fechaIngreso;
 
+    private String direccion;
+
     private boolean activo;
 
     public Empleados() {
 
     }
 
-    public Empleados(String nombre, String apellido, String correo, String telefono, LocalDate fecha_nacimiento, String cedula, int edad, RolEmpleado rol, LocalDate fechaIngreso, boolean activo) {
+    public Empleados(String nombre, String apellido, String correo, String telefono, LocalDate fecha_nacimiento, String cedula, int edad, RolEmpleado rol, LocalDate fechaIngreso, String direccion, boolean activo) {
         super(nombre, apellido, correo, telefono, fecha_nacimiento, cedula, edad);
         this.rol = rol;
         this.fechaIngreso = fechaIngreso;
+        this.direccion = direccion;
         this.activo = activo;
     }
 
@@ -53,6 +56,14 @@ public class Empleados extends Persona {
 
     public void setFechaIngreso(LocalDate fechaIngreso) {
         this.fechaIngreso = fechaIngreso;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 
     public boolean isActivo() {

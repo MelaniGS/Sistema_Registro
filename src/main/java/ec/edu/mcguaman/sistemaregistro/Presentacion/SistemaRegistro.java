@@ -43,7 +43,7 @@ public class SistemaRegistro extends javax.swing.JFrame {
         fileMenu.setText("Sistema Registro");
 
         openMenuItem.setMnemonic('o');
-        openMenuItem.setText("Persona");
+        openMenuItem.setText("Cliente");
         openMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openMenuItemActionPerformed(evt);
@@ -91,7 +91,7 @@ public class SistemaRegistro extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
-        frm_Usuario obj = new frm_Usuario();
+        frm_Cliente obj = new frm_Cliente();
         desktopPane.add(obj);
         obj.setVisible(true);
     }//GEN-LAST:event_openMenuItemActionPerformed

@@ -129,7 +129,7 @@
                   </Group>
                   <Component id="jScrollPane1" pref="0" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace min="0" pref="16" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="19" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -195,7 +195,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTable" name="tbl_usuario">
+        <Component class="javax.swing.JTable" name="tbl_clientes">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="0" rowCount="4"/>
@@ -208,7 +208,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tbl_usuarioMouseClicked"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tbl_clientesMouseClicked"/>
           </Events>
         </Component>
       </SubComponents>
@@ -244,9 +244,9 @@
     <Component class="javax.swing.JLabel" name="jLabel7">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Segoe UI" size="24" style="1"/>
+          <Font name="Cambria Math" size="24" style="1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="SISTEMA REGISTRO USUARIO"/>
+        <Property name="text" type="java.lang.String" value="SISTEMA REGISTRO CLIENTE"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btn_limpiar">
@@ -336,6 +336,9 @@
           </Border>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_direccionKeyTyped"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="checkBox_afilicacion">
       <Properties>

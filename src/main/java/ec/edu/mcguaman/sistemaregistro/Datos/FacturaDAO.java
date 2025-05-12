@@ -1,5 +1,6 @@
 package ec.edu.mcguaman.sistemaregistro.Datos;
 
+import java.util.logging.Logger;
 import javax.persistence.*;
 import modelo.Factura;
 import util.persistenceUtil;
@@ -10,56 +11,48 @@ import util.persistenceUtil;
  */
 public class FacturaDAO {
 
-    private static EntityManagerFactory emf;
+    private static final Logger LOGGER = Logger.getLogger(FacturaDAO.class.getName());
 
-    static {
-        emf = Persistence.createEntityManagerFactory("SistemaRegistroUsuario");
-    }
-
-    // This method returns the EntityManager for interacting with the database
-    public EntityManager getEntityManager() {
-        return emf.createEntityManager();
-    }
-
-    // [0] registro exitoso [1] ocurrio un error 
-    public int RegistrarFactura(Factura facturaAgregar) {
-        // Inicia la sesion de trabajo con la base de datos
-        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();  // Using your PersistenceUtil
+    /**
+     * 0 = éxito, 1 = error
+     */
+    public int registrarFactura(Factura factura) {
+        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
         try {
-            // Se inicia la transicion
             em.getTransaction().begin();
-
-            // Se inserta la persona
-            em.persist(facturaAgregar);
-
-            // Confirmar y guardar los cambios
+            em.persist(factura);
             em.getTransaction().commit();
             return 0;
         } catch (Exception ex) {
-            // Revertir todo, no guardar nada
-            em.getTransaction().rollback();
-            System.err.println("Error de sesion de trabajo: " + ex.getMessage());
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            LOGGER.severe("Error al registrar Factura: " + ex.getMessage());
             return 1;
         } finally {
-            em.close();  // Make sure to close the entity manager
+            em.close();
         }
     }
 
     public Factura obtenerFacturaCompletaPorId(int idFactura) {
-        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();  // Usando PersistenceUtil
+        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
         try {
             return em.createQuery(
                     "SELECT f FROM Factura f "
-                    + "JOIN FETCH f.persona "
+                    + "JOIN FETCH f.persona p "
                     + "LEFT JOIN FETCH f.detalles d "
-                    + "LEFT JOIN FETCH d.producto "
+                    + "LEFT JOIN FETCH d.producto pr "
                     + "WHERE f.idFactura = :idFactura", Factura.class)
                     .setParameter("idFactura", idFactura)
                     .getSingleResult();
-        } catch (NoResultException e) {
-            return null;  // Retorna null si no se encuentra la factura
+        } catch (NoResultException ex) {
+            LOGGER.warning("Factura no encontrada con ID: " + idFactura);
+            return null;
+        } catch (Exception ex) {
+            LOGGER.severe("Error al obtener Factura: " + ex.getMessage());
+            return null;
         } finally {
-            em.close();  // Asegúrate de cerrar el EntityManager después de usarlo
+            em.close();
         }
     }
 

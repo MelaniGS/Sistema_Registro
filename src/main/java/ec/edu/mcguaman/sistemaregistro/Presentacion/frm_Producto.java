@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import modelo.Producto;
 
@@ -22,27 +23,35 @@ public class frm_Producto extends javax.swing.JInternalFrame {
     /**
      * Creates new form frm_Producto
      */
-    private ProductoServicio servicio;
-    public static DefaultTableModel modelo;
+    private final ProductoServicio servicio;
+    private DefaultTableModel modelo;
     private List<Producto> listadoProductos;
 
     public frm_Producto() {
         initComponents();
         servicio = new ProductoServicio();
-        List<Producto> lista = servicio.ObtenerProducto();
-        mostrarDatos(lista);
+        listarYMostrar();
     }
 
-    private void mostrarDatos(List<Producto> listaProductos) {
-        listadoProductos = listaProductos;
+    private void listarYMostrar() {
+        listadoProductos = servicio.listarProductos();
+        mostrarDatos(listadoProductos);
+    }
+
+    private void mostrarDatos(List<Producto> lista) {
         modelo = new DefaultTableModel();
         modelo.addColumn("ID");
-        modelo.addColumn("Codigo");
+        modelo.addColumn("Código");
         modelo.addColumn("Nombre");
         modelo.addColumn("Precio");
 
-        for (Producto prod : listaProductos) {
-            Object[] fila = {prod.getIdP(),  prod.getCodigo(), prod.getNombre(), prod.getPrecio()};
+        for (Producto prod : lista) {
+            Object[] fila = {
+                prod.getIdP(),
+                prod.getCodigo(),
+                prod.getNombre(),
+                prod.getPrecio()
+            };
             modelo.addRow(fila);
         }
         tbl_producto.setModel(modelo);
@@ -236,129 +245,108 @@ public class frm_Producto extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
-        // Si el formulario esta lleno proceder a enviarlo a la capa de negocio
-        if (ValidarFormulario()) {
-            String nombre = txt_nombre.getText();
-            String codigo = txt_codigo.getText();
-            Double precio = Double.parseDouble(txt_precio.getText());
-
-            //String codigo, String nombre, Double precio
-            Producto nuevoProducto = new Producto(codigo, nombre, precio);
-
-            // [0] ya existe la persomna  [1] registro de persona exitoso
-            // [2] Error interno [3] la persona es menor de edad
-            int registro = servicio.AgregarNuevoProducto(nuevoProducto);
-
-            switch (registro) {
+        if (!validarFormulario()) {
+            JOptionPane.showMessageDialog(this,
+                    "Complete los campos obligatorios.",
+                    "Advertencia",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            String codigo = txt_codigo.getText().trim();
+            String nombre = txt_nombre.getText().trim();
+            Double precio = Double.parseDouble(txt_precio.getText().trim());
+            Producto prod = new Producto(codigo, nombre, precio);
+            int res = servicio.agregarProducto(prod);
+            switch (res) {
+                case 1:
+                    JOptionPane.showMessageDialog(this,
+                            "Producto registrado.",
+                            "Información",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    break;
                 case 0:
-                    JOptionPane.showMessageDialog(null,
-                            "Ya existe El producto con ese codigo.",
+                    JOptionPane.showMessageDialog(this,
+                            "Código ya registrado.",
                             "Advertencia",
                             JOptionPane.WARNING_MESSAGE);
                     break;
-
-                case 1:
-                    JOptionPane.showMessageDialog(null,
-                            "Registro exitoso.",
-                            "Información",
-                            JOptionPane.INFORMATION_MESSAGE);
-                    // Se procede a actualizar la tabla de registro y limpiar el formulario
-                    List<Producto> lista = servicio.ObtenerProducto();
-                    mostrarDatos(lista);
-                    LimpiarFormulario();
-                    break;
-
                 case 2:
-                    JOptionPane.showMessageDialog(null,
-                            "Error interno, intentelo más tarde.",
+                    JOptionPane.showMessageDialog(this,
+                            "Error interno.",
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
                     break;
             }
-        } else {
-            JOptionPane.showMessageDialog(null,
-                    "Debe completar todos los campos obligatorios.",
-                    "Advertencia",
-                    JOptionPane.INFORMATION_MESSAGE);
+            listarYMostrar();
+            limpiarFormulario();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Precio inválido.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
-
     }//GEN-LAST:event_btn_agregarActionPerformed
 
     private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
-        // Se obtiene el id seleccionado de la tabla
-        int filaSeleccionada = tbl_producto.getSelectedRow();
-
-        // Se valdia que la fila seleccionada sea superior a cero 
-        if (filaSeleccionada >= 0) {
-            // Confirmar antes de eliminar
-            int confirmacion = JOptionPane.showConfirmDialog(null,
-                    "¿Estás seguro de eliminar este producto?",
-                    "Confirmar eliminación",
-                    JOptionPane.YES_NO_OPTION);
-
-            if (confirmacion == JOptionPane.YES_OPTION) {
-                int idProducto = listadoProductos.get(filaSeleccionada).getIdP();
-                System.out.println("El id" + idProducto);
-
-                boolean eliminado = servicio.EliminarProductoPorIdP(idProducto);
-
-                if (eliminado) {
-                    JOptionPane.showMessageDialog(null, "Producto eliminado correctamente.");
-                    List<Producto> listadoProductos = servicio.ObtenerProducto();
-                    mostrarDatos(listadoProductos);
-                } else {
-                    JOptionPane.showMessageDialog(null, "No se pudo eliminar el producto.");
-                }
-            }
+        int idx = tbl_producto.getSelectedRow();
+        if (idx < 0) {
+            return;
         }
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "¿Eliminar producto?",
+                "Confirmar",
+                JOptionPane.YES_NO_OPTION);
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+        String codigo = listadoProductos.get(idx).getCodigo();
+        boolean ok = servicio.eliminarProductoPorCodigo(codigo);
+        JOptionPane.showMessageDialog(this,
+                ok ? "Producto eliminado." : "Error al eliminar.");
+        listarYMostrar();
+        limpiarFormulario();
     }//GEN-LAST:event_btn_eliminarActionPerformed
-
     private void llenarFormularioDesdeTabla() {
-        int filaSeleccionada = tbl_producto.getSelectedRow();
-
-        if (filaSeleccionada >= 0) {
-            // Obtenemos el objeto Persona desde la lista
-            Producto personaSeleccionada = listadoProductos.get(filaSeleccionada);
-
-            txt_nombre.setText(personaSeleccionada.getNombre());
-            txt_codigo.setText(personaSeleccionada.getCodigo());
-            txt_precio.setText(personaSeleccionada.getPrecio().toString());
+        int idx = tbl_producto.getSelectedRow();
+        if (idx < 0) {
+            return;
         }
+        Producto prod = listadoProductos.get(idx);
+        txt_codigo.setText(prod.getCodigo());
+        txt_nombre.setText(prod.getNombre());
+        txt_precio.setText(prod.getPrecio().toString());
     }
 
     private void btn_actualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_actualizarActionPerformed
-        // Se obtiene el id seleccionado de la tabla
-        int filaSeleccionada = tbl_producto.getSelectedRow();
-        // Se valdia que la fila seleccionada sea superior a cero 
-        if (filaSeleccionada >= 0) {
-
-            // Si el formulario esta lleno proceder a enviarlo a la capa de negocio
-            if (ValidarFormulario()) {
-                String nombre = txt_nombre.getText();
-                String codigo = txt_codigo.getText();
-                Double precio = Double.parseDouble(txt_precio.getText());
-
-                Producto actualizarProducto = new Producto(codigo, nombre, precio);
-
-                int idPersona = listadoProductos.get(filaSeleccionada).getIdP();
-
-                boolean actualizado = servicio.ActualizarProducto(idPersona, actualizarProducto);
-
-                if (actualizado) {
-                    JOptionPane.showMessageDialog(null,
-                            "Registro actualizado.",
-                            "Información",
-                            JOptionPane.INFORMATION_MESSAGE);
-                    List<Producto> lista = servicio.ObtenerProducto();
-                    mostrarDatos(lista);
-                    LimpiarFormulario();
-                } else {
-                    JOptionPane.showMessageDialog(null,
-                            "No se pudo actualizar el registro.",
-                            "Advertencia",
-                            JOptionPane.WARNING_MESSAGE);
-                }
-            }
+        int idx = tbl_producto.getSelectedRow();
+        if (idx < 0) {
+            return;
+        }
+        if (!validarFormulario()) {
+            JOptionPane.showMessageDialog(this,
+                    "Complete los campos obligatorios.",
+                    "Advertencia",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            String codigo = txt_codigo.getText().trim();
+            String nombre = txt_nombre.getText().trim();
+            Double precio = Double.parseDouble(txt_precio.getText().trim());
+            Producto prod = new Producto(codigo, nombre, precio);
+            boolean ok = servicio.actualizarProducto(prod);
+            JOptionPane.showMessageDialog(this,
+                    ok ? "Producto actualizado." : "Error al actualizar.",
+                    "Información",
+                    ok ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
+            listarYMostrar();
+            limpiarFormulario();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Precio inválido.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btn_actualizarActionPerformed
 
@@ -368,11 +356,11 @@ public class frm_Producto extends javax.swing.JInternalFrame {
 
     private void btn_limpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_limpiarActionPerformed
         // TODO add your handling code here:
-        LimpiarFormulario();
+        limpiarFormulario();
     }//GEN-LAST:event_btn_limpiarActionPerformed
 
     private void txt_codigoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_codigoKeyTyped
-    
+
     }//GEN-LAST:event_txt_codigoKeyTyped
 
     private void txt_nombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_nombreKeyTyped
@@ -394,26 +382,38 @@ public class frm_Producto extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txt_nombreKeyTyped
 
     private void txt_precioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_precioKeyTyped
-        
+
     }//GEN-LAST:event_txt_precioKeyTyped
 
-    public void LimpiarFormulario() {
+    private void limpiarFormulario() {
         txt_codigo.setText("");
         txt_nombre.setText("");
         txt_precio.setText("");
     }
 
-    public boolean ValidarFormulario() {
-        Border bordeRojo = BorderFactory.createLineBorder(Color.RED, 2);
-        Border bordeNegro = BorderFactory.createLineBorder(Color.BLACK, 2);
-
-        txt_codigo.setBorder(txt_codigo.getText().trim().isEmpty() ? bordeRojo : bordeNegro);
-        txt_precio.setBorder(txt_precio.getText().trim().isEmpty() ? bordeRojo : bordeNegro);
-        txt_nombre.setBorder(txt_nombre.getText().trim().isEmpty() ? bordeRojo : bordeNegro);
-
-        return !(txt_codigo.getText().trim().isEmpty()
-                || txt_precio.getText().trim().isEmpty()
-                || txt_nombre.getText().trim().isEmpty());
+    private boolean validarFormulario() {
+        boolean ok = true;
+        Border rojo = new LineBorder(Color.RED, 2);
+        Border negro = new LineBorder(Color.BLACK, 1);
+        if (txt_codigo.getText().trim().isEmpty()) {
+            txt_codigo.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_codigo.setBorder(negro);
+        }
+        if (txt_nombre.getText().trim().isEmpty()) {
+            txt_nombre.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_nombre.setBorder(negro);
+        }
+        if (txt_precio.getText().trim().isEmpty()) {
+            txt_precio.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_precio.setBorder(negro);
+        }
+        return ok;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

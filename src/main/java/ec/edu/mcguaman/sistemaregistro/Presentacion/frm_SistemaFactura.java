@@ -122,6 +122,7 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
         btn_RegistrarFactura = new javax.swing.JButton();
         btn_buscarCedPersona = new javax.swing.JButton();
         btn_buscarCodProducto = new javax.swing.JButton();
+        btn_imprimirFactura = new javax.swing.JButton();
 
         setClosable(true);
         setIconifiable(true);
@@ -204,7 +205,7 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
         txt_nombre.setEditable(false);
 
         jLabel6.setFont(new java.awt.Font("Cambria Math", 0, 24)); // NOI18N
-        jLabel6.setText("Detalles de los Productos");
+        jLabel6.setText("Productos Seleccionados");
 
         jLabel7.setText("ID Cliente:");
 
@@ -259,6 +260,8 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
                 btn_buscarCodProductoActionPerformed(evt);
             }
         });
+
+        btn_imprimirFactura.setText("IMPRIMIR FACTURA");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -324,7 +327,10 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
                         .addGap(130, 130, 130))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btn_RegistrarFactura)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btn_RegistrarFactura)
+                                .addGap(18, 18, 18)
+                                .addComponent(btn_imprimirFactura))
                             .addComponent(jLabel1)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addGroup(layout.createSequentialGroup()
@@ -418,7 +424,9 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
                 .addGap(21, 21, 21)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_RegistrarFactura)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_RegistrarFactura)
+                    .addComponent(btn_imprimirFactura))
                 .addGap(13, 13, 13))
         );
 
@@ -482,7 +490,7 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
 
     private void BuscarCedPersona() {
         String cedula = this.txt_CedCliente.getText();
-        this.personaEncontrada = this.servicio.BuscarPersonaPorCedula(cedula);
+        this.personaEncontrada = this.servicio.buscarPersonaPorCedula(cedula);
         if (this.personaEncontrada != null) {
 
             this.txt_nombre.setText(this.personaEncontrada.getNombre());
@@ -505,7 +513,7 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
     private void BuscarCodProducto() {
         String codigo = this.txt_CodProduct.getText();
 
-        this.productoEncontrado = this.servicio.BuscarProductoPorCodigo(codigo);
+        this.productoEncontrado = this.servicio.buscarProductoPorCodigo(codigo);
 
         if (this.productoEncontrado != null) {
             System.out.println("El producto encontrado es: " + productoEncontrado.getNombre());
@@ -533,7 +541,6 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
             DefaultTableModel model = (DefaultTableModel) tbl_productos.getModel();
             boolean productoExistente = false;
 
-            // Recorre las filas para buscar si el producto ya está en la tabla
             for (int i = 0; i < model.getRowCount(); i++) {
                 if (model.getValueAt(i, 1).equals(this.productoEncontrado.getIdP())) {
                     int cantidadExistente = (int) model.getValueAt(i, 3);
@@ -551,7 +558,6 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
                     cantidad, precioUnitario, total};
                 model.addRow(row);
             }
-            // Añadir el detalle a la lista de detallesFactura
             DetalleFactura detalle = new DetalleFactura();
             detalle.setProducto(this.productoEncontrado);
             detalle.setCantidad(cantidad);
@@ -565,54 +571,46 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
 
     private void DetallesFactura() {
         float subtotal = 0;
-        // Sumar los totales de los productos en la tabla de productos
         DefaultTableModel model = (DefaultTableModel) tbl_productos.getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
-            float totalProducto = (float) model.getValueAt(i, 5);  // El total de cada producto está en la columna 5
-            subtotal += totalProducto;  // Sumar el total del producto al subtotal
+            float totalProducto = (float) model.getValueAt(i, 5);  
+            subtotal += totalProducto;  
         }
 
-        float iva = subtotal * 0.15f;  // 15% de IVA
+        float iva = subtotal * 0.15f;  
         float total = subtotal + iva;
 
-        txt_subtotal.setText(String.format("%.2f", subtotal));  // Subtotal
-        txt_iva.setText(String.format("%.2f", iva));            // IVA
+        txt_subtotal.setText(String.format("%.2f", subtotal));  
+        txt_iva.setText(String.format("%.2f", iva));            
         txt_total.setText(String.format("%.2f", total));
 
         DefaultTableModel facturaModel = (DefaultTableModel) tbl_Factura.getModel();
         facturaModel.setRowCount(0);  // Limpiar la tabla de factura
-
-        // Agregar la fila con la información actualizada, incluyendo el ID de la factura
         Object[] filaFactura = {
             this.personaEncontrada.getId(),
             this.personaEncontrada.getNombre(),
             this.personaEncontrada.getApellido(),
             this.personaEncontrada.getCedula(),
             this.personaEncontrada.getCorreo(),
-            total // Total
+            total
         };
-        facturaModel.addRow(filaFactura);  // Agregar la fila a la tabla de la factura
+        facturaModel.addRow(filaFactura);
     }
 
     private void EliminarProducto() {
         int selectedRow = tbl_productos.getSelectedRow();
 
         if (selectedRow != -1) {
-            // Obtener el ID del producto desde la tabla (supongo que está en la columna 1)
             int idP = (int) tbl_productos.getValueAt(selectedRow, 1);
 
             DefaultTableModel model = (DefaultTableModel) tbl_productos.getModel();
             model.removeRow(selectedRow);  // Eliminar el producto de la tabla
-
-            // Eliminar el detalle correspondiente de la lista `detallesFactura`
             for (DetalleFactura detalle : detallesFactura) {
                 if (detalle.getProducto().getIdP() == idP) {  // Comparamos con el ID del producto
                     detallesFactura.remove(detalle);  // Eliminar el detalle de la lista
                     break;  // Salir del bucle una vez encontrado el detalle
                 }
             }
-
-            // Actualizar los cálculos de la factura (subtotal, iva, total)
             DetallesFactura();
         } else {
             JOptionPane.showMessageDialog(this, "Por favor selecciona un producto para eliminar.");
@@ -621,11 +619,9 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
 
     private void RegistrarFactura() {
         if (this.personaEncontrada != null && !detallesFactura.isEmpty()) {
-            // Crear la factura con la persona y los detalles de los productos
             Factura nuevaFactura = new Factura(this.personaEncontrada, detallesFactura);
 
-            // Registrar la nueva factura a través del servicio
-            servicio.RegistrarNuevaFactura(nuevaFactura);  // El servicio se encargará de calcular el monto total
+            servicio.registrarFactura(nuevaFactura);  // El servicio se encargará de calcular el monto total
             LimpiarTablas();  // Limpiar las tablas de productos y factura
             LimpiarCalculos();  // Limpiar los campos de calculo (subtotal, iva, total)
             LimpiarPersona();
@@ -660,15 +656,12 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
     }
 
     private void LimpiarTablas() {
-        // Limpiar tabla de persona
         DefaultTableModel modeloPersona = (DefaultTableModel) tbl_productos.getModel();
         modeloPersona.setRowCount(0);
 
-        // Limpiar tabla de detalles
         DefaultTableModel modeloDetalle = (DefaultTableModel) tbl_Factura.getModel();
         modeloDetalle.setRowCount(0);
 
-        // Limpiar la lista de detalles
         detallesFactura.clear();
     }
 
@@ -685,6 +678,7 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
     private javax.swing.JButton btn_agregarProducto;
     private javax.swing.JButton btn_buscarCedPersona;
     private javax.swing.JButton btn_buscarCodProducto;
+    private javax.swing.JButton btn_imprimirFactura;
     private javax.swing.JButton btn_limpiarTextoProductos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

@@ -4,6 +4,7 @@
  */
 package ec.edu.mcguaman.sistemaregistro.Presentacion;
 
+import ec.edu.mcguaman.sistemaregistro.Negocio.ClienteServicio;
 import ec.edu.mcguaman.sistemaregistro.Negocio.PersonaServicio;
 import java.awt.Color;
 import java.awt.Toolkit;
@@ -16,6 +17,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import modelo.Cliente;
 import modelo.Fidelidad;
@@ -25,22 +27,25 @@ import modelo.Persona;
  *
  * @author ASUS
  */
-public class frm_Usuario extends javax.swing.JInternalFrame {
+public class frm_Cliente extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form persona_frm
      */
-    private PersonaServicio servicio;
-    private SimpleDateFormat formato;
-    public static DefaultTableModel modelo;
-    private List<Persona> listadoPersonas;
+    private ClienteServicio servicio;
+    private DefaultTableModel modelo;
+    private List<Cliente> listadoClientes;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-    public frm_Usuario() {
+    public frm_Cliente() {
         initComponents();
-        servicio = new PersonaServicio();
-        this.formato = new SimpleDateFormat("dd-MM-yyyy");
-        List<Persona> lista = servicio.ObtenerPersona();
-        mostrarDatos(lista);
+        servicio = new ClienteServicio();
+        listarYMostrar();
+    }
+
+    private void listarYMostrar() {
+        listadoClientes = servicio.listarClientes();
+        mostrarDatos(listadoClientes);
     }
 
     /**
@@ -62,7 +67,7 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
         txt_correo = new javax.swing.JTextField();
         butt_agregar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tbl_usuario = new javax.swing.JTable();
+        tbl_clientes = new javax.swing.JTable();
         butt_eliminar = new javax.swing.JButton();
         butt_actualizar = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
@@ -105,7 +110,7 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
             }
         });
 
-        tbl_usuario.setModel(new javax.swing.table.DefaultTableModel(
+        tbl_clientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {},
                 {},
@@ -116,12 +121,12 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
 
             }
         ));
-        tbl_usuario.addMouseListener(new java.awt.event.MouseAdapter() {
+        tbl_clientes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tbl_usuarioMouseClicked(evt);
+                tbl_clientesMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tbl_usuario);
+        jScrollPane1.setViewportView(tbl_clientes);
 
         butt_eliminar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         butt_eliminar.setText("Eliminar");
@@ -141,8 +146,8 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
             }
         });
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel7.setText("SISTEMA REGISTRO USUARIO");
+        jLabel7.setFont(new java.awt.Font("Cambria Math", 1, 24)); // NOI18N
+        jLabel7.setText("SISTEMA REGISTRO CLIENTE");
 
         btn_limpiar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         btn_limpiar.setText("Limpiar");
@@ -191,6 +196,11 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
         jLabel8.setText("Dirección:");
 
         txt_direccion.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txt_direccion.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_direccionKeyTyped(evt);
+            }
+        });
 
         checkBox_afilicacion.setText("Desea Afiliarse");
 
@@ -283,71 +293,62 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
                             .addComponent(btn_limpiar)
                             .addComponent(butt_actualizar)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGap(0, 16, Short.MAX_VALUE))
+                .addGap(0, 19, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void mostrarDatos(List<Persona> listaPersona) {
-        listadoPersonas = listaPersona;
+    private void mostrarDatos(List<Cliente> lista) {
         modelo = new DefaultTableModel();
-        modelo.addColumn("ID");              // 0
-        modelo.addColumn("Cedula");          // 1
-        modelo.addColumn("Nombre");          // 2
-        modelo.addColumn("Apellido");        // 3
-        modelo.addColumn("Correo");          // 4
-        modelo.addColumn("Fecha Nacimiento");// 5
-        modelo.addColumn("Edad");            // 6
-        modelo.addColumn("Telefono");        // 7
-        modelo.addColumn("Dirección");       // 8
+        modelo.addColumn("ID");
+        modelo.addColumn("Cédula");
+        modelo.addColumn("Nombre");
+        modelo.addColumn("Apellido");
+        modelo.addColumn("Correo");
+        modelo.addColumn("Fecha Nac.");
+        modelo.addColumn("Edad");
+        modelo.addColumn("Teléfono");
+        modelo.addColumn("Dirección");
 
-        for (Persona pers : listaPersona) {
-            // Como es lista de Persona, haz un cast seguro a Cliente
-            String dir = (pers instanceof Cliente)
-                    ? ((Cliente) pers).getDireccion()
-                    : "";
+        for (Cliente c : lista) {
             Object[] fila = {
-                pers.getId(),
-                pers.getCedula(),
-                pers.getNombre(),
-                pers.getApellido(),
-                pers.getCorreo(),
-                pers.getFecha_nacimiento(),
-                pers.getEdad(),
-                pers.getTelefono(),
-                dir // <-- aquí
+                c.getId(),
+                c.getCedula(),
+                c.getNombre(),
+                c.getApellido(),
+                c.getCorreo(),
+                c.getFecha_nacimiento().format(formatter),
+                c.getEdad(),
+                c.getTelefono(),
+                c.getDireccion()
             };
             modelo.addRow(fila);
         }
-        tbl_usuario.setModel(modelo);
+        tbl_clientes.setModel(modelo);
     }
 
     private void llenarFormularioDesdeTabla() {
-        int filaSeleccionada = tbl_usuario.getSelectedRow();
-
-        if (filaSeleccionada >= 0) {
-            // Obtenemos el objeto Persona desde la lista
-            Persona personaSeleccionada = listadoPersonas.get(filaSeleccionada);
-
-            txt_nombre.setText(personaSeleccionada.getNombre());
-            txt_apellido.setText(personaSeleccionada.getApellido());
-            txt_cedula.setText(personaSeleccionada.getCedula());
-            txt_correo.setText(personaSeleccionada.getCorreo());
-            txt_telefono.setText(personaSeleccionada.getTelefono());
-
-            // Convertir LocalDate a String con formato dd-MM-yyyy
-            LocalDate fechaNacimiento = personaSeleccionada.getFecha_nacimiento();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            txt_fecha.setText(fechaNacimiento.format(formatter));
+        int idx = tbl_clientes.getSelectedRow();
+        if (idx < 0) {
+            return;
         }
+        Cliente c = listadoClientes.get(idx);
+        txt_nombre.setText(c.getNombre());
+        txt_apellido.setText(c.getApellido());
+        txt_cedula.setText(c.getCedula());
+        txt_correo.setText(c.getCorreo());
+        txt_telefono.setText(c.getTelefono());
+        txt_fecha.setText(c.getFecha_nacimiento().format(formatter));
+        txt_direccion.setText(c.getDireccion());
+        checkBox_afilicacion.setSelected(c.getFidelidad() != null);
     }
 
-    private void LimpiarFormulario() {
+    private void limpiarFormulario() {
+        txt_nombre.setText("");
         txt_apellido.setText("");
         txt_cedula.setText("");
         txt_correo.setText("");
-        txt_nombre.setText("");
         txt_telefono.setText("");
         txt_fecha.setText("");
         txt_direccion.setText("");
@@ -355,211 +356,130 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
     }
 
     private void butt_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butt_agregarActionPerformed
-        // 1. Validar formulario
-        if (!ValidarFormulario()) {
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Debe completar todos los campos obligatorios.",
+        if (!validarFormulario()) {
+            JOptionPane.showMessageDialog(this,
+                    "Complete los campos obligatorios.",
                     "Advertencia",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        // 2. Leer campos
-        String nombre = txt_nombre.getText().trim();
-        String apellido = txt_apellido.getText().trim();
-        String cedula = txt_cedula.getText().trim();
-        String correo = txt_correo.getText().trim();
-        String telefono = txt_telefono.getText().trim();
-        String direccion = txt_direccion.getText().trim();
-
-        // 3. Parsear fecha
-        LocalDate fechaNacimiento;
         try {
-            String[] p = txt_fecha.getText().trim().split("-");
-            int dia = Integer.parseInt(p[0]);
-            int mes = Integer.parseInt(p[1]);
-            int año = Integer.parseInt(p[2]);
-            fechaNacimiento = LocalDate.of(año, mes, dia);
+            LocalDate fecha = LocalDate.parse(txt_fecha.getText().trim(), formatter);
+            Cliente cli = new Cliente(
+                    txt_nombre.getText().trim(),
+                    txt_apellido.getText().trim(),
+                    txt_correo.getText().trim(),
+                    txt_telefono.getText().trim(),
+                    fecha,
+                    txt_cedula.getText().trim(),
+                    txt_direccion.getText().trim()
+            );
+            if (checkBox_afilicacion.isSelected()) {
+                cli.setFidelidad(new Fidelidad(cli, 0, 0, LocalDate.now()));
+            }
+            int res = servicio.agregarCliente(cli);
+            switch (res) {
+                case 1 ->
+                    JOptionPane.showMessageDialog(this,
+                            "Cliente registrado.",
+                            "Información",
+                            JOptionPane.INFORMATION_MESSAGE);
+                case 0 ->
+                    JOptionPane.showMessageDialog(this,
+                            "Cédula ya registrada.",
+                            "Advertencia",
+                            JOptionPane.WARNING_MESSAGE);
+                case 2 ->
+                    JOptionPane.showMessageDialog(this,
+                            "Error interno.",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                case 3 ->
+                    JOptionPane.showMessageDialog(this,
+                            "Solo mayores de edad.",
+                            "Advertencia",
+                            JOptionPane.WARNING_MESSAGE);
+            }
+            listarYMostrar();
+            limpiarFormulario();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Formato de fecha inválido. Use dd-mm-yyyy.",
+            JOptionPane.showMessageDialog(this,
+                    "Fecha inválida.",
                     "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
-            return;
-        }
-
-        // 4. Crear Cliente
-        Cliente nuevaPersona = new Cliente(
-                nombre, apellido, correo,
-                telefono, fechaNacimiento,
-                cedula, direccion
-        );
-
-        // 5. Afiliación
-        if (checkBox_afilicacion.isSelected()) {
-            Fidelidad fidelidad = new Fidelidad(
-                    nuevaPersona,
-                    0,
-                    0,
-                    LocalDate.now()
-            );
-            nuevaPersona.setFidelidad(fidelidad);
-        }
-
-        // 6. Llamar servicio
-        int registro = servicio.AgregarNuevaPersona(nuevaPersona);
-
-        // 7. Manejo de resultados
-        switch (registro) {
-            case 0:
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Ya existe la persona con ese número de cédula.",
-                        "Advertencia",
-                        JOptionPane.WARNING_MESSAGE
-                );
-                break;
-            case 1:
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Registro exitoso.",
-                        "Información",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-                mostrarDatos(servicio.ObtenerPersona());
-                LimpiarFormulario();
-                break;
-            case 2:
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Error interno, inténtelo más tarde.",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE
-                );
-                break;
-            case 3:
-                JOptionPane.showMessageDialog(
-                        null,
-                        "El sistema solo permite registrar a mayores de edad.",
-                        "Advertencia",
-                        JOptionPane.QUESTION_MESSAGE
-                );
-                break;
-            default:
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Código de respuesta desconocido: " + registro,
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE
-                );
+                    JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_butt_agregarActionPerformed
 
     private void butt_actualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butt_actualizarActionPerformed
-        int filaSeleccionada = tbl_usuario.getSelectedRow();
-        if (filaSeleccionada < 0) {
-            return; // No hay fila seleccionada
-        }
-
-        // 1. Validar formulario
-        if (!ValidarFormulario()) {
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Debe completar todos los campos obligatorios.",
-                    "Advertencia",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+        int idx = tbl_clientes.getSelectedRow();
+        if (idx < 0) {
             return;
         }
-
-        // 2. Leer campos
-        String nombre = txt_nombre.getText().trim();
-        String apellido = txt_apellido.getText().trim();
-        String cedula = txt_cedula.getText().trim();
-        String correo = txt_correo.getText().trim();
-        String telefono = txt_telefono.getText().trim();
-        String direccion = txt_direccion.getText().trim();
-
-        // 3. Parsear fecha
-        LocalDate fechaNacimiento;
+        if (!validarFormulario()) {
+            JOptionPane.showMessageDialog(this,
+                    "Complete los campos obligatorios.",
+                    "Advertencia",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         try {
-            String[] p = txt_fecha.getText().trim().split("-");
-            int dia = Integer.parseInt(p[0]);
-            int mes = Integer.parseInt(p[1]);
-            int año = Integer.parseInt(p[2]);
-            fechaNacimiento = LocalDate.of(año, mes, dia);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Formato de fecha inválido. Use dd-mm-yyyy.",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
+            LocalDate fecha = LocalDate.parse(txt_fecha.getText().trim(), formatter);
+            Cliente cli = new Cliente(
+                    txt_nombre.getText().trim(),
+                    txt_apellido.getText().trim(),
+                    txt_correo.getText().trim(),
+                    txt_telefono.getText().trim(),
+                    fecha,
+                    txt_cedula.getText().trim(),
+                    txt_direccion.getText().trim()
             );
-            return;
-        }
-
-        // 4. Crear Cliente con nueva dirección
-        Cliente actualizarPersona = new Cliente(
-                nombre, apellido, correo,
-                telefono, fechaNacimiento,
-                cedula, direccion
-        );
-
-        // 5. Llamar servicio de actualización
-        int idPersona = listadoPersonas.get(filaSeleccionada).getId();
-        boolean actualizado = servicio.ActualizarPersona(idPersona, actualizarPersona);
-
-        // 6. Resultado
-        if (actualizado) {
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Registro actualizado.",
+            cli.setId(listadoClientes.get(idx).getId());
+            if (checkBox_afilicacion.isSelected()) {
+                cli.setFidelidad(new Fidelidad(cli, 0, 0, LocalDate.now()));
+            }
+            boolean ok = servicio.actualizarCliente(cli);
+            JOptionPane.showMessageDialog(this,
+                    ok ? "Registro actualizado." : "Error al actualizar.",
                     "Información",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
-            mostrarDatos(servicio.ObtenerPersona());
-            LimpiarFormulario();
-        } else {
-            JOptionPane.showMessageDialog(
-                    null,
-                    "No se pudo actualizar el registro.",
-                    "Advertencia",
-                    JOptionPane.WARNING_MESSAGE
-            );
+                    ok ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
+            listarYMostrar();
+            limpiarFormulario();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Fecha inválida.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_butt_actualizarActionPerformed
 
     private void butt_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butt_eliminarActionPerformed
-        // Se obtiene el id seleccionado de la tabla
-        int filaSeleccionada = tbl_usuario.getSelectedRow();
-
-        // Se valdia que la fila seleccionada sea superior a cero 
-        if (filaSeleccionada >= 0) {
-            // Confirmar antes de eliminar
-            int confirmacion = JOptionPane.showConfirmDialog(null,
-                    "¿Estás seguro de eliminar esta persona?",
-                    "Confirmar eliminación",
-                    JOptionPane.YES_NO_OPTION);
-
-            if (confirmacion == JOptionPane.YES_OPTION) {
-                int idPersona = listadoPersonas.get(filaSeleccionada).getId();
-                System.out.println("El id" + idPersona);
-
-                boolean eliminado = servicio.EliminarPersonaPorId(idPersona);
-
-                if (eliminado) {
-                    JOptionPane.showMessageDialog(null, "Persona eliminada correctamente.");
-                    List<Persona> listaPersona = servicio.ObtenerPersona();
-                    mostrarDatos(listaPersona);
-                } else {
-                    JOptionPane.showMessageDialog(null, "No se pudo eliminar la persona.");
-                }
-            }
+        int idx = tbl_clientes.getSelectedRow();
+        if (idx < 0) {
+            return;
         }
+
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "¿Estás seguro de eliminar este cliente?",
+                "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION
+        );
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        // Obtengo el ID desde la lista
+        int idCliente = listadoClientes.get(idx).getId();
+        boolean ok = servicio.eliminarCliente(idCliente);
+
+        JOptionPane.showMessageDialog(
+                this,
+                ok ? "Cliente eliminado." : "Error al eliminar.",
+                "Información",
+                ok ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE
+        );
+        listarYMostrar();
+        limpiarFormulario();
     }//GEN-LAST:event_butt_eliminarActionPerformed
 
     public void desactivarAgregar(boolean activo) {
@@ -570,38 +490,25 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
         }
     }
 
-    private void tbl_usuarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_usuarioMouseClicked
+    private void tbl_clientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_clientesMouseClicked
         llenarFormularioDesdeTabla();
-    }//GEN-LAST:event_tbl_usuarioMouseClicked
+    }//GEN-LAST:event_tbl_clientesMouseClicked
 
     private void btn_limpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_limpiarActionPerformed
-        // TODO add your handling code here:
-        LimpiarFormulario();
+        limpiarFormulario();
     }//GEN-LAST:event_btn_limpiarActionPerformed
 
     private void txt_fechaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_fechaKeyPressed
-        // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_DELETE || evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-            // Si es 'Delete' o 'Backspace', no hacemos nada y permitimos borrar
             return;
         }
-
-        // Solo validamos si no es una tecla de borrar
         char caracter = evt.getKeyChar();
-
-        // Permitir solo números (0-9) y la raya '-'
         if ((caracter < '0' || caracter > '9') && caracter != '-') {
             evt.consume();  // Si no es un número ni una raya, se descarta el evento
-
-            // Mostrar un mensaje de error si el carácter no es válido
             JOptionPane.showMessageDialog(null, "Error: Solo se permiten números y el carácter '-'.", "Carácter no válido", JOptionPane.ERROR_MESSAGE);
         }
-
-        // Limitar la longitud de la cadena de texto a 10 caracteres (dd-mm-yyyy)
         if (txt_fecha.getText().length() >= 10) {
             evt.consume();  // Si se superan los 10 caracteres, se descarta el evento
-
-            // Mostrar un mensaje de error si se supera el límite de caracteres
             JOptionPane.showMessageDialog(null, "Error: La fecha debe tener exactamente 10 caracteres.", "Límite de caracteres excedido", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_txt_fechaKeyPressed
@@ -617,30 +524,17 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
     private void txt_cedulaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_cedulaKeyTyped
         char c = evt.getKeyChar();
 
-        // 1) Permitir controles (Backspace, Delete…)
         if (Character.isISOControl(c)) {
             return;
         }
-        // 2) Sólo dígitos
         if (!Character.isDigit(c)) {
             evt.consume();
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Error: Sólo se permiten dígitos en la cédula.",
-                    "Carácter no válido",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            JOptionPane.showMessageDialog(null, "Error: Sólo se permiten dígitos en la cédula.", "Carácter no válido", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        // 3) Longitud máxima 10
         if (txt_cedula.getText().length() >= 10) {
             evt.consume();
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Error: La cédula debe tener como máximo 10 dígitos.",
-                    "Límite excedido",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            JOptionPane.showMessageDialog(null, "Error: La cédula debe tener como máximo 10 dígitos.", "Límite excedido", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_txt_cedulaKeyTyped
 
@@ -652,33 +546,25 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
         }
         if (!Character.isDigit(c)) {
             evt.consume();
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Error: Sólo se permiten dígitos en el teléfono.",
-                    "Carácter no válido",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            JOptionPane.showMessageDialog(null, "Error: Sólo se permiten dígitos en el teléfono.", "Carácter no válido", JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (txt_telefono.getText().length() >= 10) {
             evt.consume();
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Error: El teléfono debe tener como máximo 10 dígitos.",
-                    "Límite excedido",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            JOptionPane.showMessageDialog(null, "Error: El teléfono debe tener como máximo 10 dígitos.", "Límite excedido", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_txt_telefonoKeyTyped
+
+    private void txt_direccionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_direccionKeyTyped
+        ValidarCaracteres(evt);
+    }//GEN-LAST:event_txt_direccionKeyTyped
 
     private void ValidarCaracteres(java.awt.event.KeyEvent evt) {
         char c = evt.getKeyChar();
 
-        // Permitir controles (Backspace, Delete, flechas…)
         if (Character.isISOControl(c)) {
             return;
         }
-        // Solo letras y espacios (incluye letras con tildes, ñ, Ñ)
         if (!Character.isLetter(c) && c != ' ') {
             evt.consume();
             JOptionPane.showMessageDialog(
@@ -690,22 +576,54 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
         }
     }
 
-    public boolean ValidarFormulario() {
-        Border bordeRojo = BorderFactory.createLineBorder(Color.RED, 2);
-        Border bordeNegro = BorderFactory.createLineBorder(Color.BLACK, 2);
+    public boolean validarFormulario() {
+        boolean ok = true;
+        LineBorder rojo = new LineBorder(Color.RED, 2);
+        LineBorder negro = new LineBorder(Color.BLACK, 1);
 
-        txt_cedula.setBorder(txt_cedula.getText().trim().isEmpty() ? bordeRojo : bordeNegro);
-        txt_correo.setBorder(txt_correo.getText().trim().isEmpty() ? bordeRojo : bordeNegro);
-        txt_nombre.setBorder(txt_nombre.getText().trim().isEmpty() ? bordeRojo : bordeNegro);
-        txt_apellido.setBorder(txt_nombre.getText().trim().isEmpty() ? bordeRojo : bordeNegro);
-        txt_telefono.setBorder(txt_telefono.getText().trim().isEmpty() ? bordeRojo : bordeNegro);
-        txt_fecha.setBorder(txt_fecha.getText().trim().isEmpty() ? bordeRojo : bordeNegro);
+        if (txt_nombre.getText().trim().isEmpty()) {
+            txt_nombre.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_nombre.setBorder(negro);
+        }
 
-        return !(txt_cedula.getText().trim().isEmpty()
-                || txt_correo.getText().trim().isEmpty()
-                || txt_nombre.getText().trim().isEmpty()
-                || txt_telefono.getText().trim().isEmpty()
-                || txt_fecha.getText().trim().isEmpty());
+        if (txt_apellido.getText().trim().isEmpty()) {
+            txt_apellido.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_apellido.setBorder(negro);
+        }
+
+        if (txt_cedula.getText().trim().isEmpty()) {
+            txt_cedula.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_cedula.setBorder(negro);
+        }
+
+        if (txt_correo.getText().trim().isEmpty()) {
+            txt_correo.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_correo.setBorder(negro);
+        }
+
+        if (txt_telefono.getText().trim().isEmpty()) {
+            txt_telefono.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_telefono.setBorder(negro);
+        }
+
+        if (txt_fecha.getText().trim().isEmpty()) {
+            txt_fecha.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_fecha.setBorder(negro);
+        }
+
+        return ok;
     }
 
 
@@ -725,7 +643,7 @@ public class frm_Usuario extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     private org.jdesktop.swingx.JXDatePicker jXDatePicker1;
-    private javax.swing.JTable tbl_usuario;
+    private javax.swing.JTable tbl_clientes;
     private javax.swing.JTextField txt_apellido;
     private javax.swing.JTextField txt_cedula;
     private javax.swing.JTextField txt_correo;
