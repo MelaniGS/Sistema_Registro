@@ -139,4 +139,20 @@ public class ProductoDAO {
             em.close();
         }
     }
+
+    // Dentro de la clase ProductoDAO
+    public boolean hayStock(String codigo, int cantidad) {
+        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            Producto p = em.createQuery("SELECT p FROM Producto p WHERE p.codigo = :cod", Producto.class)
+                    .setParameter("cod", codigo)
+                    .getSingleResult();
+            return p != null && p.getStock() >= cantidad; // Verifica si hay suficiente stock
+        } catch (NoResultException ex) {
+            return false; // Si no se encuentra el producto, retornamos false
+        } finally {
+            em.close();
+        }
+    }
+
 }

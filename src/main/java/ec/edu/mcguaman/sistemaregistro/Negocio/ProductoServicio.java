@@ -84,26 +84,19 @@ public class ProductoServicio {
         }
     }
 
-    /**
-     * Verifica si hay stock suficiente para la cantidad solicitada.
-     *
-     * @param codigo Código único del producto.
-     * @param cantidad Cantidad que se quiere vender.
-     * @return true si stock >= cantidad, false si no.
-     */
     public boolean hayStock(String codigo, int cantidad) {
         Producto p = productoDao.buscarProductoPorCodigo(codigo);
-        return p != null && p.getStock() >= cantidad;
+        if (p == null) {
+            LOGGER.warning("Producto no encontrado para el código: " + codigo);
+            return false;  // Producto no encontrado
+        }
+        if (p.getStock() < cantidad) {
+            LOGGER.warning("Stock insuficiente para el producto " + codigo + ". Stock disponible: " + p.getStock());
+            return false;  // No hay suficiente stock
+        }
+        return true;  // Hay stock suficiente
     }
 
-    /**
-     * Descuenta la cantidad vendida del stock del producto.
-     *
-     * @param codigo Código del producto.
-     * @param cantidad Cantidad a restar del inventario.
-     * @return true si la operación tuvo éxito, false si el producto no existe o
-     * no había suficiente stock.
-     */
     public boolean descontarStock(String codigo, int cantidad) {
         Producto p = productoDao.buscarProductoPorCodigo(codigo);
         if (p == null) {
@@ -112,4 +105,5 @@ public class ProductoServicio {
         // Llama al DAO para ajustar el stock (delta negativo)
         return productoDao.ajustarStock(p.getIdP(), -cantidad);
     }
+
 }

@@ -44,6 +44,7 @@ public class frm_Producto extends javax.swing.JInternalFrame {
         modelo.addColumn("Código");
         modelo.addColumn("Nombre");
         modelo.addColumn("Precio");
+        modelo.addColumn("Stock Inicial");
         modelo.addColumn("Stock Disponible");
 
         for (Producto prod : lista) {

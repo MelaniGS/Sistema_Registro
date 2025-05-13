@@ -41,22 +41,39 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
         personaServicio = new PersonaServicio();
         detallesFactura = new ArrayList<>();
 
-        // Inicializar botones y tablas
-        btn_buscarCedPersona.setEnabled(true);
-        btn_buscarCodProducto.setEnabled(false);
-        btn_agregarProducto.setEnabled(false);
-        btn_EliminarProducto.setEnabled(false);
-        btn_limpiarTextoProductos.setEnabled(false);
-        btn_RegistrarFactura.setEnabled(false);
+        // Deshabilitar los botones y campos de texto al inicio
+        this.btn_buscarCedPersona.setEnabled(false);
+        this.btn_buscarCodProducto.setEnabled(false);
+        //this.btn_AgregarPersona.setEnabled(false);
+        //this.btn_EliminarPersona.setEnabled(false);
+        //this.btn_LimpiarPersona.setEnabled(false);
+        this.btn_agregarProducto.setEnabled(false);
+        this.btn_EliminarProducto.setEnabled(false);
+        this.btn_limpiarTextoProductos.setEnabled(false);
+        this.btn_RegistrarFactura.setEnabled(false);
 
-        DefaultTableModel prodModel = new DefaultTableModel(
-                new String[]{"Código", "ID", "Producto", "Cantidad", "Precio U", "Total"}, 0);
-        tbl_productos.setModel(prodModel);
+        this.txt_CedCliente.setEnabled(true);
 
-        DefaultTableModel factModel = new DefaultTableModel(
-                new String[]{"ID Cliente", "Nombre", "Apellido", "Cédula", "Correo", "Total"}, 0);
-        tbl_Factura.setModel(factModel);
+        this.btn_buscarCedPersona.setEnabled(true);
 
+        // Inicializar las tablas de productos y factura
+        DefaultTableModel productoModel = new DefaultTableModel();
+        productoModel.addColumn("Código");
+        productoModel.addColumn("ID");
+        productoModel.addColumn("Producto");
+        productoModel.addColumn("Cantidad");
+        productoModel.addColumn("Precio Unitario");
+        productoModel.addColumn("Total");
+        tbl_productos.setModel(productoModel);
+
+        DefaultTableModel facturaModel = new DefaultTableModel();
+        facturaModel.addColumn("ID Cliente");
+        facturaModel.addColumn("Nombre");
+        facturaModel.addColumn("Apellido");
+        facturaModel.addColumn("Cédula");
+        facturaModel.addColumn("Correo Electrónico");
+        facturaModel.addColumn("Total");
+        tbl_Factura.setModel(facturaModel);
     }
 
     /**
@@ -506,29 +523,28 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
     private void BuscarCodProducto() {
         String codigo = this.txt_CodProduct.getText();
 
+        // Buscar el producto con el código ingresado
         this.productoEncontrado = this.servicio.buscarProductoPorCodigo(codigo);
 
         if (this.productoEncontrado != null) {
             System.out.println("El producto encontrado es: " + productoEncontrado.getNombre());
 
+            // Actualizar los campos de la interfaz con la información del producto
             this.txt_precio.setText(String.valueOf(this.productoEncontrado.getPrecio()));
             this.txt_nombreProducto.setText(this.productoEncontrado.getNombre());
             this.txt_IdProducto.setText(String.valueOf(this.productoEncontrado.getIdP()));
 
+            // Habilitar los botones de agregar y limpiar
             this.btn_agregarProducto.setEnabled(true);
             this.btn_EliminarProducto.setEnabled(true);
             this.btn_limpiarTextoProductos.setEnabled(true);
-
         } else {
             JOptionPane.showMessageDialog(this, "Producto no encontrado.");
         }
     }
 
     private void AgregarDetalleProducto() {
-        if (productoEncontrado == null) {
-            JOptionPane.showMessageDialog(this, "Primero busca un producto.", "Atención", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+        // Validar cantidad ingresada
         int cantidad;
         try {
             cantidad = Integer.parseInt(txt_cantidad.getText().trim());
@@ -536,68 +552,95 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Cantidad inválida.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (!prodServicio.hayStock(productoEncontrado.getCodigo(), cantidad)) {
-            JOptionPane.showMessageDialog(this,
-                "Stock insuficiente: " + productoEncontrado.getStock(), "Sin stock", JOptionPane.WARNING_MESSAGE);
+
+        // Validar que exista producto seleccionado
+        if (productoEncontrado == null) {
+            JOptionPane.showMessageDialog(this, "Primero busca un producto válido.", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
+
+        // Verificar stock disponible utilizando el servicio
+        if (!prodServicio.hayStock(productoEncontrado.getCodigo(), cantidad)) {
+            JOptionPane.showMessageDialog(this,
+                    "Stock insuficiente: " + productoEncontrado.getStock(),
+                    "Sin stock", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Calcular precio y total
+        float precioUnitario = productoEncontrado.getPrecio().floatValue();
+        float total = cantidad * precioUnitario;
+
         DefaultTableModel model = (DefaultTableModel) tbl_productos.getModel();
-        float precioUnit = productoEncontrado.getPrecio().floatValue();
-        float totalLinea = cantidad * precioUnit;
-        boolean existe = false;
+        boolean productoExistente = false;
+
+        // Recorre las filas para buscar si el producto ya está en la tabla
         for (int i = 0; i < model.getRowCount(); i++) {
-            if ((int) model.getValueAt(i,1) == productoEncontrado.getIdP()) {
-                int q = (int)model.getValueAt(i,3) + cantidad;
-                float t = (float)model.getValueAt(i,5) + totalLinea;
-                model.setValueAt(q, i, 3);
-                model.setValueAt(t, i, 5);
-                existe = true;
+            if ((int) model.getValueAt(i, 1) == productoEncontrado.getIdP()) {
+                // Si el producto ya existe, actualiza la cantidad y el total
+                int cantidadExistente = (int) model.getValueAt(i, 3);
+                float totalExistente = (float) model.getValueAt(i, 5);
+
+                model.setValueAt(cantidadExistente + cantidad, i, 3);
+                model.setValueAt(totalExistente + total, i, 5);
+                productoExistente = true;
                 break;
             }
         }
-        if (!existe) {
-            model.addRow(new Object[]{
+
+        // Si no existía, agregamos una nueva fila
+        if (!productoExistente) {
+            Object[] row = {
                 productoEncontrado.getCodigo(),
                 productoEncontrado.getIdP(),
                 productoEncontrado.getNombre(),
                 cantidad,
-                precioUnit,
-                totalLinea
-            });
+                precioUnitario,
+                total
+            };
+            model.addRow(row);
         }
+
+        // Añadir el detalle a la lista de detallesFactura
         DetalleFactura detalle = new DetalleFactura();
         detalle.setProducto(productoEncontrado);
         detalle.setCantidad(cantidad);
-        detalle.setTotal(totalLinea);
+        detalle.setTotal(total);
         detallesFactura.add(detalle);
-        actualizarDetallesFactura();
+
         btn_RegistrarFactura.setEnabled(true);
+        DetallesFactura();
     }
 
-    
-
-    private void actualizarDetallesFactura() {
+    private void DetallesFactura() {
         float subtotal = 0;
-        DefaultTableModel prodModel = (DefaultTableModel) tbl_productos.getModel();
-        for (int r = 0; r < prodModel.getRowCount(); r++) {
-            subtotal += (float) prodModel.getValueAt(r, 5);
+        // Sumar los totales de los productos en la tabla de productos
+        DefaultTableModel model = (DefaultTableModel) tbl_productos.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            float totalProducto = (float) model.getValueAt(i, 5);  // El total de cada producto está en la columna 5
+            subtotal += totalProducto;  // Sumar el total del producto al subtotal
         }
-        float iva = subtotal * 0.15f;
+
+        float iva = subtotal * 0.15f;  // 15% de IVA
         float total = subtotal + iva;
-        txt_subtotal.setText(String.format("%.2f", subtotal));
-        txt_iva.setText(String.format("%.2f", iva));
+
+        txt_subtotal.setText(String.format("%.2f", subtotal));  // Subtotal
+        txt_iva.setText(String.format("%.2f", iva));            // IVA
         txt_total.setText(String.format("%.2f", total));
 
-        DefaultTableModel factModel = (DefaultTableModel) tbl_Factura.getModel();
-        factModel.setRowCount(0);
-        factModel.addRow(new Object[]{
-            personaEncontrada.getId(),
-            personaEncontrada.getNombre(),
-            personaEncontrada.getApellido(),
-            personaEncontrada.getCedula(),
-            personaEncontrada.getCorreo(),
-            total
-        });
+        DefaultTableModel facturaModel = (DefaultTableModel) tbl_Factura.getModel();
+        facturaModel.setRowCount(0);  // Limpiar la tabla de factura
+
+        // Agregar la fila con la información actualizada, incluyendo el ID de la factura
+        Object[] filaFactura = {
+            this.personaEncontrada.getId(),
+            this.personaEncontrada.getNombre(),
+            this.personaEncontrada.getApellido(),
+            this.personaEncontrada.getCedula(),
+            this.personaEncontrada.getCorreo(),
+            total // Total
+        };
+        facturaModel.addRow(filaFactura);  // Agregar la fila a la tabla de la factura
     }
 
     private void EliminarProducto() {
@@ -609,7 +652,7 @@ public class frm_SistemaFactura extends javax.swing.JInternalFrame {
         int idP = (int) tbl_productos.getValueAt(row, 1);
         ((DefaultTableModel) tbl_productos.getModel()).removeRow(row);
         detallesFactura.removeIf(d -> d.getProducto().getIdP() == idP);
-        actualizarDetallesFactura();
+        DetallesFactura();
     }
 
     private void RegistrarFactura() {
