@@ -4,11 +4,14 @@ C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\ec\edu\mcguaman\sistemaregistro\Datos\FacturaDAO.java
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\ec\edu\mcguaman\sistemaregistro\Datos\PersonaDAO.java
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\ec\edu\mcguaman\sistemaregistro\Datos\ProductoDAO.java
+C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\ec\edu\mcguaman\sistemaregistro\Datos\RolDAO.java
+C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\ec\edu\mcguaman\sistemaregistro\Datos\RolEmpleadoDAO.java
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\ec\edu\mcguaman\sistemaregistro\Negocio\ClienteServicio.java
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\ec\edu\mcguaman\sistemaregistro\Negocio\EmpleadoServicio.java
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\ec\edu\mcguaman\sistemaregistro\Negocio\FacturaServicio.java
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\ec\edu\mcguaman\sistemaregistro\Negocio\PersonaServicio.java
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\ec\edu\mcguaman\sistemaregistro\Negocio\ProductoServicio.java
+C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\ec\edu\mcguaman\sistemaregistro\Negocio\RolServicio.java
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Cliente.java
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Empleado.java
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\ec\edu\mcguaman\sistemaregistro\Presentacion\frm_Producto.java
@@ -23,4 +26,6 @@ C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\modelo\Fidelidad.java
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\modelo\Persona.java
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\modelo\Producto.java
+C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\modelo\RolEmpleado.java
+C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\reportes\cls_reportes.java
 C:\Users\ASUS\OneDrive\Documentos\NetBeansProjects\SistemaRegistroMela\src\main\java\util\persistenceUtil.java

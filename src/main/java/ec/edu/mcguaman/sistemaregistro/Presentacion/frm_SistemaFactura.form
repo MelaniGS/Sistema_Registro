@@ -294,7 +294,6 @@
     </Component>
     <Component class="javax.swing.JTextField" name="txt_cantidad">
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_cantidadActionPerformed"/>
         <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_cantidadKeyTyped"/>
       </Events>
     </Component>
@@ -449,7 +448,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="btn_buscarCedPersona">
       <Properties>
-        <Property name="text" type="java.lang.String" value="BUSCAR PERSONA"/>
+        <Property name="text" type="java.lang.String" value="BUSCAR CLIENTE"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_buscarCedPersonaActionPerformed"/>
@@ -467,6 +466,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="IMPRIMIR FACTURA"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_imprimirFacturaActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

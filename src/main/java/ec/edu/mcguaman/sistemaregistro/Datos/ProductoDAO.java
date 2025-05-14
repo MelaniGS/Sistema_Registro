@@ -69,21 +69,22 @@ public class ProductoDAO {
         }
     }
 
+    // Método para actualizar el stock de un producto
     public boolean actualizarProducto(Producto producto) {
         EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
         try {
-            if (em.find(Producto.class, producto.getIdP()) == null) {
+            Producto p = em.find(Producto.class, producto.getIdP());
+            if (p == null) {
                 return false;
             }
             em.getTransaction().begin();
-            em.merge(producto);
+            p.setStockActual(producto.getStockActual()); // Actualizar stockActual
             em.getTransaction().commit();
             return true;
         } catch (Exception ex) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            LOGGER.severe("Error al actualizar Producto: " + ex.getMessage());
             return false;
         } finally {
             em.close();

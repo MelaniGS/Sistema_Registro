@@ -98,12 +98,15 @@ public class ProductoServicio {
     }
 
     public boolean descontarStock(String codigo, int cantidad) {
-        Producto p = productoDao.buscarProductoPorCodigo(codigo);
+        Producto p = buscarProductoPorCodigo(codigo);
         if (p == null) {
             return false;
         }
-        // Llama al DAO para ajustar el stock (delta negativo)
-        return productoDao.ajustarStock(p.getIdP(), -cantidad);
+        if (p.getStockActual() < cantidad) {
+            return false;
+        }
+        p.descontarStock(cantidad);  // Actualiza el stockActual
+        return productoDao.actualizarProducto(p);  // Guardamos la actualización
     }
 
 }

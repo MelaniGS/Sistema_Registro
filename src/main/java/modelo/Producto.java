@@ -36,6 +36,9 @@ public class Producto {
     @Column(nullable = false)
     private int stock;
 
+    @Column(nullable = false)
+    private int stockActual;
+
     public Producto() {
     }
 
@@ -44,6 +47,7 @@ public class Producto {
         this.nombre = nombre;
         this.precio = precio;
         this.stock = stock;
+        this.stockActual = stock;
     }
 
     public int getIdP() {
@@ -86,4 +90,23 @@ public class Producto {
         this.stock = stock;
     }
 
+    public int getStockActual() {
+        return stockActual;
+    }
+
+    public void setStockActual(int stockActual) {
+        this.stockActual = stockActual;
+    }
+
+    // Método para descontar stock
+    public void descontarStock(int cantidad) {
+        if (cantidad <= stockActual) {
+            stockActual -= cantidad;
+        }
+    }
+
+    // Método para incrementar el stock
+    public void incrementarStock(int cantidad) {
+        stockActual += cantidad;
+    }
 }

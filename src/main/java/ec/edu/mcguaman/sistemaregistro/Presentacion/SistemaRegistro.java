@@ -34,6 +34,7 @@ public class SistemaRegistro extends javax.swing.JFrame {
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
         saveMenuItem = new javax.swing.JMenuItem();
+        menu_empleado = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         menu_factura = new javax.swing.JMenuItem();
 
@@ -59,6 +60,14 @@ public class SistemaRegistro extends javax.swing.JFrame {
             }
         });
         fileMenu.add(saveMenuItem);
+
+        menu_empleado.setText("Empleado");
+        menu_empleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_empleadoActionPerformed(evt);
+            }
+        });
+        fileMenu.add(menu_empleado);
 
         menuBar.add(fileMenu);
 
@@ -109,6 +118,13 @@ public class SistemaRegistro extends javax.swing.JFrame {
         obj.setVisible(true);
     }//GEN-LAST:event_menu_facturaActionPerformed
 
+    private void menu_empleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_empleadoActionPerformed
+        // TODO add your handling code here:
+        frm_Empleado obj = new frm_Empleado();
+        desktopPane.add(obj);
+        obj.setVisible(true);
+    }//GEN-LAST:event_menu_empleadoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -149,6 +165,7 @@ public class SistemaRegistro extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem menu_empleado;
     private javax.swing.JMenuItem menu_factura;
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenuItem saveMenuItem;

@@ -44,8 +44,7 @@ public class frm_Producto extends javax.swing.JInternalFrame {
         modelo.addColumn("Código");
         modelo.addColumn("Nombre");
         modelo.addColumn("Precio");
-        modelo.addColumn("Stock Inicial");
-        modelo.addColumn("Stock Disponible");
+        modelo.addColumn("Stock Actual");
 
         for (Producto prod : lista) {
             Object[] fila = {
@@ -262,6 +261,12 @@ public class frm_Producto extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // Método para actualizar la tabla de productos después de una venta
+    public void actualizarTablaProductos() {
+        listadoProductos = servicio.listarProductos();  // Listar nuevamente los productos
+        mostrarDatos(listadoProductos);  // Refrescar la tabla con los nuevos datos
+    }
+
     private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
         if (!validarFormulario()) {
             JOptionPane.showMessageDialog(this,
@@ -423,33 +428,20 @@ public class frm_Producto extends javax.swing.JInternalFrame {
         txt_stock.setText("");
     }
 
+    // Método para validar los campos del formulario
     private boolean validarFormulario() {
         boolean ok = true;
-        Border rojo = new LineBorder(Color.RED, 2);
-        Border negro = new LineBorder(Color.BLACK, 1);
         if (txt_codigo.getText().trim().isEmpty()) {
-            txt_codigo.setBorder(rojo);
             ok = false;
-        } else {
-            txt_codigo.setBorder(negro);
         }
         if (txt_nombre.getText().trim().isEmpty()) {
-            txt_nombre.setBorder(rojo);
             ok = false;
-        } else {
-            txt_nombre.setBorder(negro);
         }
         if (txt_precio.getText().trim().isEmpty()) {
-            txt_precio.setBorder(rojo);
             ok = false;
-        } else {
-            txt_precio.setBorder(negro);
         }
         if (txt_stock.getText().trim().isEmpty()) {
-            txt_stock.setBorder(rojo);
             ok = false;
-        } else {
-            txt_stock.setBorder(negro);
         }
         return ok;
     }

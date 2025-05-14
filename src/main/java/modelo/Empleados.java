@@ -15,13 +15,8 @@ import javax.persistence.*;
 @Table(name = "empleados")
 public class Empleados extends Persona {
 
-    public enum RolEmpleado {
-        Cajero,
-        Administrador,
-        Gerente
-    }
-
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "rol_id", nullable = false)
     private RolEmpleado rol;
 
     private LocalDate fechaIngreso;
@@ -32,6 +27,14 @@ public class Empleados extends Persona {
 
     public Empleados() {
 
+    }
+
+    public Empleados(String nombre, String apellido, String correo, String telefono, LocalDate fecha_nacimiento, String cedula, String direccion, LocalDate fechaIngreso, String trim5, boolean activo) {
+        super(nombre, apellido, correo, telefono, fecha_nacimiento, cedula);
+        this.rol = rol;
+        this.fechaIngreso = fechaIngreso;
+        this.direccion = direccion;
+        this.activo = activo;
     }
 
     public Empleados(String nombre, String apellido, String correo, String telefono, LocalDate fecha_nacimiento, String cedula, int edad, RolEmpleado rol, LocalDate fechaIngreso, String direccion, boolean activo) {

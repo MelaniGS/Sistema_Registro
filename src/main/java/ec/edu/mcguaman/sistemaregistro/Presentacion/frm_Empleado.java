@@ -4,8 +4,20 @@
  */
 package ec.edu.mcguaman.sistemaregistro.Presentacion;
 
+import ec.edu.mcguaman.sistemaregistro.Negocio.EmpleadoServicio;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.border.LineBorder;
+import modelo.Empleados;
+
+import javax.swing.table.DefaultTableModel;
+import modelo.RolEmpleado;
 
 /**
  *
@@ -13,11 +25,74 @@ import javax.swing.JOptionPane;
  */
 public class frm_Empleado extends javax.swing.JInternalFrame {
 
+    private EmpleadoServicio servicio;
+    private DefaultTableModel modelo;
+    private List<Empleados> listadoEmpleados;
+    private List<String> roles;  // Lista para manejar los roles dinámicos.
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
     /**
      * Creates new form frm_Empleado
      */
     public frm_Empleado() {
         initComponents();
+        servicio = new EmpleadoServicio();
+        roles = new ArrayList<>();
+        listarYMostrar();
+        llenarComboboxes();
+        txt_nuevoRol.setVisible(false);
+        btn_guardarRol.setVisible(false);
+
+        // Cargar los roles desde la base de datos
+        actualizarComboBoxRoles();
+
+    }
+
+    private void listarYMostrar() {
+        listadoEmpleados = servicio.listarEmpleados(); // Obtener empleados desde el servicio
+        mostrarDatos(listadoEmpleados); // Llenar la tabla con la lista de empleados
+    }
+
+    private void mostrarDatos(List<Empleados> lista) {
+        modelo = new DefaultTableModel();
+        modelo.addColumn("ID");
+        modelo.addColumn("Cédula");
+        modelo.addColumn("Nombre");
+        modelo.addColumn("Apellido");
+        modelo.addColumn("Correo");
+        modelo.addColumn("Fecha Nacimiento");
+        modelo.addColumn("Edad");
+        modelo.addColumn("Teléfono");
+        modelo.addColumn("Dirección");
+        modelo.addColumn("Rol");
+        modelo.addColumn("Fecha Ingreso");
+
+        for (Empleados e : lista) {
+            Object[] fila = {
+                e.getId(),
+                e.getCedula(),
+                e.getNombre(),
+                e.getApellido(),
+                e.getCorreo(),
+                e.getFecha_nacimiento(),
+                e.getEdad(),
+                e.getTelefono(),
+                e.getDireccion(),
+                e.getRol(),
+                e.getFechaIngreso()
+            };
+            modelo.addRow(fila);
+        }
+        tbl_empleados.setModel(modelo);
+    }
+
+    private void llenarComboboxes() {
+        // Vaciar el ComboBox para dejarlo vacío al principio
+        cb_roles.removeAllItems();
+
+        // Mostrar el campo de texto y el botón "Guardar Rol"
+        txt_nuevoRol.setVisible(true);
+        btn_guardarRol.setVisible(true);
     }
 
     /**
@@ -29,7 +104,7 @@ public class frm_Empleado extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        txt_fecha = new javax.swing.JTextField();
+        txt_fechaNacimiento = new javax.swing.JTextField();
         txt_nombre = new javax.swing.JTextField();
         txt_apellido = new javax.swing.JTextField();
         txt_cedula = new javax.swing.JTextField();
@@ -42,7 +117,7 @@ public class frm_Empleado extends javax.swing.JInternalFrame {
         txt_correo = new javax.swing.JTextField();
         txt_telefono = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cb_roles = new javax.swing.JComboBox<>();
         txt_fechaIngreso = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         checkBox_Estado = new javax.swing.JCheckBox();
@@ -55,11 +130,20 @@ public class frm_Empleado extends javax.swing.JInternalFrame {
         btn_eliminar = new javax.swing.JButton();
         btn_limpiar = new javax.swing.JButton();
         btn_actualizar = new javax.swing.JButton();
+        txt_nuevoRol = new javax.swing.JTextField();
+        btn_guardarRol = new javax.swing.JButton();
+        btn_añadirRol = new javax.swing.JButton();
 
-        txt_fecha.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txt_fecha.addKeyListener(new java.awt.event.KeyAdapter() {
+        setClosable(true);
+        setIconifiable(true);
+        setMaximizable(true);
+        setResizable(true);
+        setTitle("Sistema Registro Empleados");
+
+        txt_fechaNacimiento.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txt_fechaNacimiento.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                txt_fechaKeyPressed(evt);
+                txt_fechaNacimientoKeyPressed(evt);
             }
         });
 
@@ -107,8 +191,7 @@ public class frm_Empleado extends javax.swing.JInternalFrame {
 
         jLabel7.setText("Rol Empleado:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        cb_roles.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         txt_fechaIngreso.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txt_fechaIngreso.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -132,6 +215,11 @@ public class frm_Empleado extends javax.swing.JInternalFrame {
 
             }
         ));
+        tbl_empleados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_empleadosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tbl_empleados);
 
         jLabel9.setFont(new java.awt.Font("Cambria Math", 1, 24)); // NOI18N
@@ -149,56 +237,94 @@ public class frm_Empleado extends javax.swing.JInternalFrame {
         });
 
         btn_eliminar.setText("ELIMINAR");
+        btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_eliminarActionPerformed(evt);
+            }
+        });
 
         btn_limpiar.setText("LIMPIAR");
+        btn_limpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_limpiarActionPerformed(evt);
+            }
+        });
 
         btn_actualizar.setText("ACTUALIZAR");
+        btn_actualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_actualizarActionPerformed(evt);
+            }
+        });
+
+        txt_nuevoRol.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        btn_guardarRol.setText("Guardar Rol");
+        btn_guardarRol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_guardarRolActionPerformed(evt);
+            }
+        });
+
+        btn_añadirRol.setText("Añadir Rol");
+        btn_añadirRol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_añadirRolActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btn_agregar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btn_eliminar))
+                    .addComponent(txt_nombre)
+                    .addComponent(txt_apellido)
+                    .addComponent(txt_cedula)
+                    .addComponent(txt_telefono)
+                    .addComponent(txt_correo)
+                    .addComponent(txt_fechaNacimiento)
+                    .addComponent(txt_fechaIngreso)
+                    .addComponent(txt_direccion)
+                    .addComponent(txt_nuevoRol)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(cb_roles, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btn_añadirRol))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(jLabel1))
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel10)
+                    .addComponent(checkBox_Estado)
+                    .addComponent(btn_guardarRol))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(btn_limpiar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btn_actualizar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 972, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel9)
-                .addGap(199, 199, 199))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(2, 2, 2)
-                                .addComponent(jLabel1))
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel3)
-                            .addComponent(txt_nombre)
-                            .addComponent(txt_apellido)
-                            .addComponent(txt_cedula)
-                            .addComponent(txt_telefono)
-                            .addComponent(txt_correo)
-                            .addComponent(txt_fecha, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel7)
-                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txt_fechaIngreso, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel10)
-                            .addComponent(checkBox_Estado)
-                            .addComponent(txt_direccion))
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btn_agregar)
-                        .addGap(18, 18, 18)
-                        .addComponent(btn_eliminar)
-                        .addGap(18, 18, 18)
-                        .addComponent(btn_limpiar)
-                        .addGap(18, 18, 18)
-                        .addComponent(btn_actualizar)
-                        .addGap(626, 626, 626))))
+                .addGap(261, 261, 261))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -230,20 +356,26 @@ public class frm_Empleado extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_fecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_fechaIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txt_fechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_direccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cb_roles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_añadirRol))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txt_nuevoRol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_guardarRol)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_fechaIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(19, 19, 19)
                         .addComponent(checkBox_Estado))
                     .addComponent(jScrollPane1))
                 .addGap(18, 18, 18)
@@ -258,7 +390,64 @@ public class frm_Empleado extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txt_fechaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_fechaKeyPressed
+    private void inicializarRoles() {
+        // Limpiar el ComboBox antes de agregar elementos
+        cb_roles.removeAllItems();
+
+        // Obtener los roles desde la base de datos
+        List<String> roles = servicio.listarRoles(); // Este método debe devolver los roles de la base de datos
+
+        // Agregar los roles al ComboBox
+        for (String rol : roles) {
+            cb_roles.addItem(rol);
+        }
+    }
+
+    private void llenarFormularioDesdeTabla() {
+        int idx = tbl_empleados.getSelectedRow();
+        if (idx < 0) {
+            return; // No hay fila seleccionada
+        }
+
+        Empleados e = listadoEmpleados.get(idx); // Obtener el empleado desde la lista de empleados
+        txt_nombre.setText(e.getNombre()); // Rellenar el campo nombre
+        txt_apellido.setText(e.getApellido()); // Rellenar el campo apellido
+        txt_cedula.setText(e.getCedula()); // Rellenar el campo cédula
+        txt_correo.setText(e.getCorreo()); // Rellenar el campo correo
+        txt_telefono.setText(e.getTelefono()); // Rellenar el campo teléfono
+        txt_fechaNacimiento.setText(e.getFecha_nacimiento().format(formatter)); // Rellenar el campo fecha de nacimiento
+        txt_direccion.setText(e.getDireccion()); // Rellenar el campo dirección
+
+        // Establecer el rol seleccionado en el JComboBox
+        for (int i = 0; i < cb_roles.getItemCount(); i++) {
+            if (cb_roles.getItemAt(i).toString().equals(e.getRol().toString())) {
+                cb_roles.setSelectedIndex(i);
+                break;
+            }
+        }
+        // Rellenar la fecha de ingreso (si es necesario)
+        if (e.getFechaIngreso() != null) {
+            txt_fechaIngreso.setText(e.getFechaIngreso().format(formatter));
+        }
+
+        // Rellenar el estado (activo)
+        checkBox_Estado.setSelected(e.isActivo());
+    }
+
+    private void limpiarFormulario() {
+        txt_nombre.setText("");
+        txt_apellido.setText("");
+        txt_cedula.setText("");
+        txt_correo.setText("");
+        txt_telefono.setText("");
+        txt_fechaNacimiento.setText("");
+        txt_direccion.setText("");
+        checkBox_Estado.setSelected(false);
+        txt_fechaIngreso.setText("");
+        cb_roles.setSelectedIndex(0);  // Seleccionar el primer rol por defecto
+    }
+
+    private void txt_fechaNacimientoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_fechaNacimientoKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_DELETE || evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
             return;
         }
@@ -267,11 +456,11 @@ public class frm_Empleado extends javax.swing.JInternalFrame {
             evt.consume();  // Si no es un número ni una raya, se descarta el evento
             JOptionPane.showMessageDialog(null, "Error: Solo se permiten números y el carácter '-'.", "Carácter no válido", JOptionPane.ERROR_MESSAGE);
         }
-        if (txt_fecha.getText().length() >= 10) {
+        if (txt_fechaNacimiento.getText().length() >= 10) {
             evt.consume();  // Si se superan los 10 caracteres, se descarta el evento
             JOptionPane.showMessageDialog(null, "Error: La fecha debe tener exactamente 10 caracteres.", "Límite de caracteres excedido", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_txt_fechaKeyPressed
+    }//GEN-LAST:event_txt_fechaNacimientoKeyPressed
 
     private void txt_nombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_nombreKeyTyped
         ValidarCaracteres(evt);
@@ -317,24 +506,236 @@ public class frm_Empleado extends javax.swing.JInternalFrame {
 
     private void txt_fechaIngresoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_fechaIngresoKeyPressed
         // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_DELETE || evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            return;
+        }
+        char caracter = evt.getKeyChar();
+        if ((caracter < '0' || caracter > '9') && caracter != '-') {
+            evt.consume();  // Si no es un número ni una raya, se descarta el evento
+            JOptionPane.showMessageDialog(null, "Error: Solo se permiten números y el carácter '-'.", "Carácter no válido", JOptionPane.ERROR_MESSAGE);
+        }
+        if (txt_fechaIngreso.getText().length() >= 10) {
+            evt.consume();  // Si se superan los 10 caracteres, se descarta el evento
+            JOptionPane.showMessageDialog(null, "Error: La fecha debe tener exactamente 10 caracteres.", "Límite de caracteres excedido", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_txt_fechaIngresoKeyPressed
 
     private void btn_agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_agregarActionPerformed
-        // TODO add your handling code here:
+        // Validar que todos los campos del formulario estén completos
+        if (!validarFormulario()) {
+            JOptionPane.showMessageDialog(this,
+                    "Complete los campos obligatorios.",
+                    "Advertencia",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            // Convertir la fecha de nacimiento desde String a LocalDate
+            String fechaNacimientoString = txt_fechaNacimiento.getText().trim();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate fechaNacimiento = LocalDate.parse(fechaNacimientoString, formatter); // Convertir String a LocalDate
+
+            // Convertir la fecha de ingreso de String a LocalDate
+            String fechaIngresoString = txt_fechaIngreso.getText().trim();
+            LocalDate fechaIngreso = LocalDate.parse(fechaIngresoString, formatter); // Convertir String a LocalDate
+
+            // Obtener el rol seleccionado del ComboBox
+            String rolSeleccionado = cb_roles.getSelectedItem().toString();
+
+            // Buscar el rol en la base de datos
+            RolEmpleado rol = servicio.buscarRolPorNombre(rolSeleccionado);
+
+            // Verificar si el rol es null  
+            if (rol == null) {
+                JOptionPane.showMessageDialog(this, "El rol seleccionado no existe en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+                return; // Detener el proceso si no se encuentra el rol
+            }
+
+            Empleados empleado = new Empleados(
+                    txt_nombre.getText().trim(),
+                    txt_apellido.getText().trim(),
+                    txt_correo.getText().trim(),
+                    txt_telefono.getText().trim(),
+                    fechaNacimiento,
+                    txt_cedula.getText().trim(), txt_direccion.getText().trim(),
+                    fechaIngreso,
+                    txt_direccion.getText().trim(),
+                    checkBox_Estado.isSelected()
+            );
+
+            // Agregar el empleado
+            int res = servicio.agregarEmpleado(empleado);
+            switch (res) {
+                case 1:
+                    JOptionPane.showMessageDialog(this, "Empleado registrado.", "Información", JOptionPane.INFORMATION_MESSAGE);
+                    break;
+                case 0:
+                    JOptionPane.showMessageDialog(this, "Cédula ya registrada.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    break;
+                case 2:
+                    JOptionPane.showMessageDialog(this, "Error interno.", "Error", JOptionPane.ERROR_MESSAGE);
+                    break;
+                case 3:
+                    JOptionPane.showMessageDialog(this, "Solo mayores de edad.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    break;
+            }
+
+            // Actualizar la tabla con la lista de empleados después de agregar
+            listarYMostrar();
+            limpiarFormulario();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Fecha inválida.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btn_agregarActionPerformed
 
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+        int idx = tbl_empleados.getSelectedRow();
+        if (idx < 0) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un empleado para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "¿Estás seguro de eliminar este empleado?",
+                "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION
+        );
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        // Obtener el ID del empleado seleccionado
+        int idEmpleado = listadoEmpleados.get(idx).getId();
+        boolean ok = servicio.eliminarEmpleado(idEmpleado);
+
+        JOptionPane.showMessageDialog(
+                this,
+                ok ? "Empleado eliminado." : "Error al eliminar.",
+                "Información",
+                ok ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE
+        );
+        listarYMostrar(); // Actualizar la lista de empleados
+        limpiarFormulario(); // Limpiar el formulario
+    }//GEN-LAST:event_btn_eliminarActionPerformed
+
+    private void btn_limpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_limpiarActionPerformed
+        // TODO add your handling code here:
+        limpiarFormulario();
+    }//GEN-LAST:event_btn_limpiarActionPerformed
+
+    private void btn_actualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_actualizarActionPerformed
+        int idx = tbl_empleados.getSelectedRow();
+        if (idx < 0) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un empleado para actualizar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (!validarFormulario()) {
+            JOptionPane.showMessageDialog(this,
+                    "Complete los campos obligatorios.",
+                    "Advertencia",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            // Obtener los datos del formulario
+            LocalDate fechaNacimiento = LocalDate.parse(txt_fechaNacimiento.getText().trim(), formatter);
+            LocalDate fechaIngreso = LocalDate.parse(txt_fechaIngreso.getText().trim(), formatter);
+            String rolSeleccionado = cb_roles.getSelectedItem().toString();
+
+            Empleados empleado = new Empleados(
+                    txt_nombre.getText().trim(),
+                    txt_apellido.getText().trim(),
+                    txt_correo.getText().trim(),
+                    txt_telefono.getText().trim(),
+                    fechaNacimiento,
+                    txt_cedula.getText().trim(),
+                    rolSeleccionado,
+                    fechaIngreso,
+                    txt_direccion.getText().trim(),
+                    checkBox_Estado.isSelected()
+            );
+            empleado.setId(listadoEmpleados.get(idx).getId());
+
+            boolean ok = servicio.actualizarEmpleado(empleado);
+            JOptionPane.showMessageDialog(this,
+                    ok ? "Empleado actualizado." : "Error al actualizar.",
+                    "Información",
+                    ok ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
+
+            listarYMostrar();
+            limpiarFormulario();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Fecha inválida.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btn_actualizarActionPerformed
+
+    private void tbl_empleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_empleadosMouseClicked
+        // TODO add your handling code here:
+        llenarFormularioDesdeTabla();
+    }//GEN-LAST:event_tbl_empleadosMouseClicked
+
+    private void btn_guardarRolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_guardarRolActionPerformed
+        String nuevoRol = txt_nuevoRol.getText().trim();
+
+        // Verificar que el campo no esté vacío
+        if (!nuevoRol.isEmpty()) {
+            // Llamar al servicio para guardar el nuevo rol
+            boolean rolGuardado = servicio.agregarNuevoRol(nuevoRol);
+
+            if (rolGuardado) {
+                // Si el rol fue guardado correctamente, mostramos mensaje
+                JOptionPane.showMessageDialog(this, "Nuevo rol añadido y guardado exitosamente.");
+
+                // Actualizar el ComboBox con el nuevo rol
+                actualizarComboBoxRoles();  // Aquí es donde se actualiza el ComboBox
+
+                // Limpiar el campo de texto
+                txt_nuevoRol.setText("");
+            } else {
+                // Si hubo un error al guardar el rol
+                JOptionPane.showMessageDialog(this, "Hubo un error al guardar el rol. Intenta nuevamente.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "El nombre del rol no puede estar vacío.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_btn_guardarRolActionPerformed
+
+    private void btn_añadirRolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_añadirRolActionPerformed
+        // Mostrar el campo de texto y el botón para añadir el nuevo rol
+        txt_nuevoRol.setVisible(true);
+        btn_guardarRol.setVisible(true);
+    }//GEN-LAST:event_btn_añadirRolActionPerformed
+
+    // Método para actualizar los datos en la tabla de empleados
+    private void actualizarTabla() {
+        listarYMostrar();
+    }
+
+    private void actualizarComboBoxRoles() {
+        // Limpiar el ComboBox
+        cb_roles.removeAllItems();
+
+        // Obtener todos los roles desde la base de datos
+        List<String> roles = servicio.listarRoles(); // Este método debe devolver todos los roles desde la base de datos
+
+        // Agregar roles al ComboBox
+        for (String rol : roles) {
+            cb_roles.addItem(rol);
+        }
+    }
+
+    public void desactivarAgregar(boolean activo) {
+        if (activo) {
+            btn_agregar.setEnabled(false);
+        } else {
+            btn_agregar.setEnabled(true);
+        }
+    }
+
     private void ValidarCaracteres(java.awt.event.KeyEvent evt) {
         char c = evt.getKeyChar();
 
@@ -351,14 +752,88 @@ public class frm_Empleado extends javax.swing.JInternalFrame {
             );
         }
     }
-    
+
+    public boolean validarFormulario() {
+        boolean ok = true;
+        LineBorder rojo = new LineBorder(Color.RED, 2);
+        LineBorder negro = new LineBorder(Color.BLACK, 1);
+
+        if (txt_nombre.getText().trim().isEmpty()) {
+            txt_nombre.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_nombre.setBorder(negro);
+        }
+
+        if (txt_apellido.getText().trim().isEmpty()) {
+            txt_apellido.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_apellido.setBorder(negro);
+        }
+
+        if (txt_cedula.getText().trim().isEmpty()) {
+            txt_cedula.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_cedula.setBorder(negro);
+        }
+
+        if (txt_correo.getText().trim().isEmpty()) {
+            txt_correo.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_correo.setBorder(negro);
+        }
+
+        if (txt_telefono.getText().trim().isEmpty()) {
+            txt_telefono.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_telefono.setBorder(negro);
+        }
+
+        if (txt_fechaNacimiento.getText().trim().isEmpty()) {
+            txt_fechaNacimiento.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_fechaNacimiento.setBorder(negro);
+        }
+
+        if (txt_direccion.getText().trim().isEmpty()) {
+            txt_direccion.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_direccion.setBorder(negro);
+        }
+
+        // Validación de fecha de ingreso
+        if (txt_fechaIngreso.getText().trim().isEmpty()) {
+            txt_fechaIngreso.setBorder(rojo);
+            ok = false;
+        } else {
+            txt_fechaIngreso.setBorder(negro);
+        }
+
+        // Verificar que el rol no sea nulo (aunque esté vacío, si no es seleccionado, mostrar un error)
+        if (cb_roles.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this, "Por favor seleccione un rol para el empleado.", "Error", JOptionPane.ERROR_MESSAGE);
+            ok = false;
+        }
+
+        return ok;
+    }
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_actualizar;
     private javax.swing.JButton btn_agregar;
+    private javax.swing.JButton btn_añadirRol;
     private javax.swing.JButton btn_eliminar;
+    private javax.swing.JButton btn_guardarRol;
     private javax.swing.JButton btn_limpiar;
+    private javax.swing.JComboBox<String> cb_roles;
     private javax.swing.JCheckBox checkBox_Estado;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -375,9 +850,10 @@ public class frm_Empleado extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txt_cedula;
     private javax.swing.JTextField txt_correo;
     private javax.swing.JTextField txt_direccion;
-    private javax.swing.JTextField txt_fecha;
     private javax.swing.JTextField txt_fechaIngreso;
+    private javax.swing.JTextField txt_fechaNacimiento;
     private javax.swing.JTextField txt_nombre;
+    private javax.swing.JTextField txt_nuevoRol;
     private javax.swing.JTextField txt_telefono;
     // End of variables declaration//GEN-END:variables
 }

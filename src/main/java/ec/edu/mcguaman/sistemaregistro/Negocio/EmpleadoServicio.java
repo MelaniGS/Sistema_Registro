@@ -5,11 +5,14 @@
 package ec.edu.mcguaman.sistemaregistro.Negocio;
 
 import ec.edu.mcguaman.sistemaregistro.Datos.EmpleadoDAO;
+import ec.edu.mcguaman.sistemaregistro.Datos.RolDAO;
+import ec.edu.mcguaman.sistemaregistro.Datos.RolEmpleadoDAO;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.logging.Logger;
 import modelo.Empleados;
+import modelo.RolEmpleado;
 
 /**
  *
@@ -19,9 +22,11 @@ public class EmpleadoServicio {
 
     private static final Logger LOGGER = Logger.getLogger(EmpleadoServicio.class.getName());
     private final EmpleadoDAO empleadoDao;
+    private final RolEmpleadoDAO rolEmpleadoDao;
 
     public EmpleadoServicio() {
         this.empleadoDao = new EmpleadoDAO();
+        this.rolEmpleadoDao = new RolEmpleadoDAO();
     }
 
     /**
@@ -87,4 +92,27 @@ public class EmpleadoServicio {
             empleado.setDireccion(empleado.getDireccion().toUpperCase());
         }
     }
+
+    public boolean agregarNuevoRol(String nuevoRol) {
+        try {
+            // Crear un nuevo objeto RolEmpleado
+            RolEmpleado rol = new RolEmpleado(nuevoRol);
+
+            // Guardar el rol en la base de datos
+            rolEmpleadoDao.guardarRol(rol);
+            return true;  // El rol fue guardado correctamente
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;  // Hubo un error al guardar el rol
+        }
+    }
+
+    public RolEmpleado buscarRolPorNombre(String nombreRol) {
+        return rolEmpleadoDao.buscarRolPorNombre(nombreRol); // Llama al DAO para obtener el rol por nombre
+    }
+
+    public List<String> listarRoles() {
+        return rolEmpleadoDao.listarTodosLosRoles();  // Llama al DAO para obtener los roles
+    }
+
 }
