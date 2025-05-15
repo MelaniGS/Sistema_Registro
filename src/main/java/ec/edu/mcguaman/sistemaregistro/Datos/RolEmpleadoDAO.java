@@ -4,9 +4,11 @@
  */
 package ec.edu.mcguaman.sistemaregistro.Datos;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import modelo.RolEmpleado;
 import util.persistenceUtil;
@@ -35,17 +37,13 @@ public class RolEmpleadoDAO {
         }
     }
 
-    public void guardarRol(RolEmpleado rolEmpleado) {
+    // En RolEmpleadoDAO
+    public void guardarRol(RolEmpleado rol) {
         EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
         try {
             em.getTransaction().begin();
-            em.persist(rolEmpleado);  // Guardar el nuevo rol en la base de datos
+            em.persist(rol);
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            LOGGER.severe("Error al guardar el rol: " + ex.getMessage());
         } finally {
             em.close();
         }
@@ -66,6 +64,7 @@ public class RolEmpleadoDAO {
 
     public List<String> listarTodosLosRoles() {
         EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
+        List<String> roles = new ArrayList<>();
         try {
             return em.createQuery("SELECT r.nombre FROM RolEmpleado r", String.class) // Usar r.nombre
                     .getResultList();

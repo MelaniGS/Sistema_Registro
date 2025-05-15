@@ -9,18 +9,20 @@ import javax.persistence.*;
 /**
  *
  * @author ASUS
- * 
- **/
+ *
+ *
+ */
 @Entity
-@Table(name = "roles")
+@Table(name = "rol_empelado")
 public class RolEmpleado {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    
-    @Column(nullable = false, unique = true)
+    private Long id;
+
+    @Column(name = "nombre")
     private String nombre;
-    
+
     public RolEmpleado() {
     }
 
@@ -28,20 +30,20 @@ public class RolEmpleado {
         this.nombre = nombre;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getNombre() {
         return nombre;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-}
 
+}

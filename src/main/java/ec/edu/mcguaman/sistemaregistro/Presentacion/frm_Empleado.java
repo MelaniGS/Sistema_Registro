@@ -12,12 +12,14 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
 import javax.swing.border.LineBorder;
 import modelo.Empleados;
 
 import javax.swing.table.DefaultTableModel;
 import modelo.RolEmpleado;
+import util.persistenceUtil;
 
 /**
  *
@@ -558,7 +560,9 @@ public class frm_Empleado extends javax.swing.JInternalFrame {
                     txt_correo.getText().trim(),
                     txt_telefono.getText().trim(),
                     fechaNacimiento,
-                    txt_cedula.getText().trim(), txt_direccion.getText().trim(),
+                    txt_cedula.getText().trim(),
+                    rolSeleccionado,
+                    txt_direccion.getText().trim(),
                     fechaIngreso,
                     txt_direccion.getText().trim(),
                     checkBox_Estado.isSelected()
@@ -714,17 +718,30 @@ public class frm_Empleado extends javax.swing.JInternalFrame {
     private void actualizarTabla() {
         listarYMostrar();
     }
-
+    
     private void actualizarComboBoxRoles() {
-        // Limpiar el ComboBox
-        cb_roles.removeAllItems();
+    cb_roles.removeAllItems(); // Limpiar los elementos actuales del ComboBox
 
-        // Obtener todos los roles desde la base de datos
-        List<String> roles = servicio.listarRoles(); // Este método debe devolver todos los roles desde la base de datos
+    List<String> rolesDesdeBD = servicio.listarRoles(); // Obtener los roles desde el servicio
 
-        // Agregar roles al ComboBox
-        for (String rol : roles) {
-            cb_roles.addItem(rol);
+    if (rolesDesdeBD != null && !rolesDesdeBD.isEmpty()) {
+        for (String rol : rolesDesdeBD) {
+            cb_roles.addItem(rol); // Agregar cada rol al ComboBox
+        }
+    } else {
+        cb_roles.addItem("No hay roles disponibles");
+    }
+}
+
+
+    public List<String> listarTodosLosRoles() {
+        EntityManager em = persistenceUtil.getEntityManagerFactory().createEntityManager();
+        List<String> roles = new ArrayList<>();
+        try {
+            return em.createQuery("SELECT r.nombre FROM RolEmpleado r", String.class)
+                    .getResultList();
+        } finally {
+            em.close();
         }
     }
 

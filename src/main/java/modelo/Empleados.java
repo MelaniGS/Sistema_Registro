@@ -29,13 +29,15 @@ public class Empleados extends Persona {
 
     }
 
-    public Empleados(String nombre, String apellido, String correo, String telefono, LocalDate fecha_nacimiento, String cedula, String direccion, LocalDate fechaIngreso, String trim5, boolean activo) {
-        super(nombre, apellido, correo, telefono, fecha_nacimiento, cedula);
-        this.rol = rol;
-        this.fechaIngreso = fechaIngreso;
-        this.direccion = direccion;
-        this.activo = activo;
-    }
+    public Empleados(String nombre, String apellido, String correo, String telefono, LocalDate fecha_nacimiento, String cedula, RolEmpleado rol, String direccion, LocalDate fechaIngreso, boolean activo) {
+    super(nombre, apellido, correo, telefono, fecha_nacimiento, cedula);
+    this.rol = rol;
+    this.fechaIngreso = fechaIngreso;
+    this.direccion = direccion;
+    this.activo = activo;
+}
+
+    
 
     public Empleados(String nombre, String apellido, String correo, String telefono, LocalDate fecha_nacimiento, String cedula, int edad, RolEmpleado rol, LocalDate fechaIngreso, String direccion, boolean activo) {
         super(nombre, apellido, correo, telefono, fecha_nacimiento, cedula, edad);
